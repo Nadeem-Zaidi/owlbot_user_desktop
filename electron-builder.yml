@@ -1,0 +1,21 @@
+appId: com.owl.desktop.enterprise
+productName: Owl
+directories:
+  output: release
+files:
+  - package.json
+  - dist/engine/**
+  - dist/main/**
+  - ui/dist/**
+  - assets/**
+  - "!**/*.map"
+# Claude Code is a program the app starts; it can't run from inside app.asar.
+asarUnpack:
+  - node_modules/@anthropic-ai/claude-agent-sdk-*/**
+win:
+  target: nsis
+  icon: assets/icon.png
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true

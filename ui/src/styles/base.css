@@ -1,0 +1,88 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Base
+   Reset, element defaults, global scrollbar and accessibility rules.
+   ═══════════════════════════════════════════════════════════════════ */
+
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-app);
+}
+
+h1,
+h2 {
+    font-family: var(--heading);
+    font-weight: 500;
+    color: var(--text-h);
+}
+
+h1 {
+    font-size: 56px;
+    letter-spacing: -1.68px;
+    margin: 32px 0;
+
+    @media (max-width: 1024px) {
+        font-size: 36px;
+        margin: 20px 0;
+    }
+}
+
+h2 {
+    font-size: 24px;
+    line-height: 118%;
+    letter-spacing: -0.24px;
+    margin: 0 0 8px;
+
+    @media (max-width: 1024px) {
+        font-size: 20px;
+    }
+}
+
+p {
+    margin: 0;
+}
+
+code {
+    font-family: var(--mono);
+    display: inline-flex;
+    border-radius: 4px;
+    color: var(--text-h);
+    font-size: 15px;
+    line-height: 135%;
+    padding: 4px 8px;
+    background: var(--code-bg);
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #b8b8c0;
+}
+
+button:focus-visible,
+.chat_history_item:focus-visible,
+.menu_item:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

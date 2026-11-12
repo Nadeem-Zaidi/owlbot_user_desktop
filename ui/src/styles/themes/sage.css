@@ -1,0 +1,126 @@
+/* ─────────────────────────────────────────────────────────────
+   Sage theme — muted grey-green, calm and natural.
+   Applies when <html data-theme="sage"> (shared/lib/theme.ts). The
+   other rules use :where(), so they win exactly as if the file were global.
+
+   Contrast (WCAG): white on the accent #4d6b57 is 5.9:1; the
+   accent as text on the page 5.5:1; primary text 15.5:1,
+   secondary 6.3:1.
+   ───────────────────────────────────────────────────────────── */
+:root[data-theme="sage"] {
+    --tone: #4d6b57;
+    --tone-hover: #3d5746;
+    --tone-soft: #eef3ef;
+
+    /* the agent icon */
+    --bot-1: #9cb8a3;
+    --bot-2: #6d8f77;
+    --bot-3: #3d5746;
+    --bot-face: #ffffff;
+
+    --bg-app: #f6f7f5;
+    --bg-surface: #ffffff;
+    --bg-input: #ffffff;
+    --bg-hover: #eef1ed;
+    --bg-active: #e3e8e2;
+    --bg-subtle: #f2f4f1;
+    --bg-code: #f2f4f1;
+    --bg-code-hdr: #e8ece7;
+
+    --border: #e1e6df;
+    --border-soft: #ebeee9;
+    --border-strong: #ccd5ca;
+
+    --text-pri: #1f2621;
+    --text-sec: #58625a;
+    --text-ter: #89928a;
+
+    --accent: #4d6b57;
+    --accent-hover: #3d5746;
+    --accent-soft: #eef3ef;
+    --accent-ring: rgba(77, 107, 87, 0.22);
+    --accent-ink: #ffffff;
+    --accent-secondary: #d4e0d7;
+    --accent-border: #c8d8cc;
+
+    --tool-purple-bg: #eef3ef;
+    --tool-purple-fg: #4d6b57;
+
+    --shadow-xs: 0 1px 2px rgba(31, 38, 33, 0.05);
+    --shadow-sm: 0 1px 3px rgba(31, 38, 33, 0.07), 0 1px 2px rgba(31, 38, 33, 0.04);
+    --shadow-md: 0 8px 24px -6px rgba(31, 38, 33, 0.13), 0 2px 6px rgba(31, 38, 33, 0.05);
+    --shadow-lg: 0 24px 60px -12px rgba(31, 38, 33, 0.26);
+
+    /* storage.css (knowledge base) */
+    --bg: #f6f7f5;
+    --surface: #ffffff;
+    --text-primary: #1f2621;
+    --text-secondary: #58625a;
+    --text-tertiary: #89928a;
+
+    color-scheme: light;
+}
+
+:where(:root[data-theme="sage"]) body {
+    background: var(--bg-app);
+    color: var(--text-pri);
+}
+
+/* ── Sidebar: white, with a accent highlight for the current page ── */
+:where(:root[data-theme="sage"]) .sidebar {
+    background: #ffffff;
+    border-right: 1px solid var(--border);
+}
+
+:where(:root[data-theme="sage"]) .menu_item.menu_item--active,
+:where(:root[data-theme="sage"]) .menu_item--active {
+    background: var(--tone-soft);
+    color: var(--tone);
+}
+
+:where(:root[data-theme="sage"]) .menu_item--active .menu_icon {
+    color: var(--tone);
+}
+
+:where(:root[data-theme="sage"]) .ag_btn--primary,
+:where(:root[data-theme="sage"]) .send_btn,
+:where(:root[data-theme="sage"]) .btn--primary,
+:where(:root[data-theme="sage"]) .upload-btn {
+    box-shadow: 0 1px 3px rgba(77, 107, 87, 0.25);
+}
+
+:where(:root[data-theme="sage"]) .ag_tab.is_active {
+    color: var(--tone);
+    border-bottom-color: var(--tone);
+}
+
+:where(:root[data-theme="sage"]) .ag_segmented button.is_active {
+    color: var(--tone);
+}
+
+/* ── Spots with the old indigo baked in ── */
+:where(:root[data-theme="sage"]) .user_avatar {
+    background: linear-gradient(135deg, #6d8f77, #3d5746);
+}
+
+:where(:root[data-theme="sage"]) .welcome__logo {
+    background: linear-gradient(145deg, #eef3ef, #f5f8f5);
+    box-shadow: inset 0 0 0 1px rgba(77, 107, 87, 0.2);
+}
+
+:where(:root[data-theme="sage"]) .mode_chip button:hover {
+    background: rgba(77, 107, 87, 0.12);
+}
+
+:where(:root[data-theme="sage"]) .source_chip:hover:not(:disabled) {
+    border-color: rgba(77, 107, 87, 0.4);
+}
+
+:where(:root[data-theme="sage"]) .ai-icon {
+    background: linear-gradient(135deg, #6d8f77 0%, #3d5746 100%);
+    box-shadow: 0 10px 24px -6px rgba(61, 87, 70, 0.45);
+}
+
+:where(:root[data-theme="sage"]) ::selection {
+    background: rgba(77, 107, 87, 0.2);
+}

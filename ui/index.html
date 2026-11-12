@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" data-theme="sky">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#2a74a8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Owl</title>
+    <!-- Theme before first paint (no flash). Mirrors shared/lib/theme.ts. -->
+    <script>
+      (function () {
+        var ids = ["sky", "slate", "sage", "graphite", "rust", "indigo", "dark"], pref = "sky";
+        try { var v = localStorage.getItem("owl_theme"); if (v === "system" || ids.indexOf(v) >= 0) pref = v; } catch (e) {}
+        var dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var id = pref === "system" ? (dark ? "dark" : "sky") : pref;
+        document.documentElement.setAttribute("data-theme", id);
+        document.documentElement.style.colorScheme = id === "dark" ? "dark" : "light";
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- App UI (Sora, Inter) and sign-in page (Syne, Playfair Display, Space Mono, DM Sans). -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" />
+    <!-- Loading screen: an animated owl shown from the very first paint until
+         the app is ready (React replaces #root's contents on its first render,
+         and shows the same markup — shared/ui/owl_loader.tsx — while it checks
+         sign-in). The CSS lives here, not in the bundle, so it works before
+         any JavaScript or stylesheet has downloaded. -->
+    <style>
+      .owl-splash {
+        position: fixed; inset: 0; z-index: 9999;
+        display: grid; place-items: center;
+        color: #1c2420;
+        background: radial-gradient(circle at 50% 42%, #ffffff 0, #f3f5f4 62%);
+        font-family: Sora, Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+        animation: owl-fade-in 0.35s ease 0.12s both;
+      }
+      .owl-splash__stage { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+      .owl-splash__orb { position: relative; width: 132px; height: 132px; display: grid; place-items: center; }
+      .owl-splash__orb::before {
+        content: ""; position: absolute; inset: 0; border-radius: 50%;
+        background: radial-gradient(circle, rgba(28, 36, 32, 0.10), rgba(28, 36, 32, 0) 68%);
+        animation: owl-glow 2.4s ease-in-out infinite;
+      }
+      .owl-splash__owl { position: relative; width: 84px; height: 84px; overflow: visible; animation: owl-breathe 2.4s ease-in-out infinite; }
+      .owl-splash__body, .owl-splash__pupil { fill: currentColor; }
+      .owl-splash__pupil { transform-box: fill-box; transform-origin: center; animation: owl-blink 4.2s infinite; }
+      .owl-splash__name { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: 0.02em; }
+      .owl-splash__bar { position: relative; width: 96px; height: 2px; border-radius: 2px; background: rgba(28, 36, 32, 0.12); overflow: hidden; }
+      .owl-splash__bar::after {
+        content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%;
+        border-radius: inherit; background: currentColor;
+        animation: owl-bar 1.3s ease-in-out infinite;
+      }
+      [data-theme="dark"] .owl-splash { color: #e6e9e7; background: radial-gradient(circle at 50% 42%, #1b2020 0, #111414 62%); }
+      [data-theme="dark"] .owl-splash__orb::before { background: radial-gradient(circle, rgba(230, 233, 231, 0.10), rgba(230, 233, 231, 0) 68%); }
+      [data-theme="dark"] .owl-splash__bar { background: rgba(230, 233, 231, 0.14); }
+      @keyframes owl-fade-in { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes owl-glow { 0%, 100% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1.08); opacity: 1; } }
+      @keyframes owl-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+      @keyframes owl-blink { 0%, 44%, 50%, 100% { transform: scaleY(1); } 47% { transform: scaleY(0.1); } }
+      @keyframes owl-bar { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+      @media (prefers-reduced-motion: reduce) {
+        .owl-splash, .owl-splash *, .owl-splash *::before, .owl-splash *::after { animation: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="owl-splash" role="status" aria-label="Loading Owl">
+        <div class="owl-splash__stage">
+          <div class="owl-splash__orb">
+            <svg class="owl-splash__owl" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path class="owl-splash__body" fill-rule="evenodd" d="M6.2 3.6 C7.6 4 8.8 4.9 9.6 5.8 C10.4 5.6 11.2 5.5 12 5.5 C12.8 5.5 13.6 5.6 14.4 5.8 C15.2 4.9 16.4 4 17.8 3.6 C18.4 5 18.5 6.6 18.1 8 C19.6 9.6 20.4 11.8 20.4 14.4 C20.4 19 16.8 22.4 12 22.4 C7.2 22.4 3.6 19 3.6 14.4 C3.6 11.8 4.4 9.6 5.9 8 C5.5 6.6 5.6 5 6.2 3.6 Z M5.85 11.2 a3.05 3.05 0 1 0 6.1 0 a3.05 3.05 0 1 0 -6.1 0 Z M12.05 11.2 a3.05 3.05 0 1 0 6.1 0 a3.05 3.05 0 1 0 -6.1 0 Z M12 13.5 C12.55 13.5 13 13.8 13 14.2 C13 14.7 12.45 15.3 12 15.6 C11.55 15.3 11 14.7 11 14.2 C11 13.8 11.45 13.5 12 13.5 Z M5.3 14.6 C5 17 5.7 19.2 7.4 20.6 C7.1 18.5 6.7 16.5 5.3 14.6 Z M18.7 14.6 C19 17 18.3 19.2 16.6 20.6 C16.9 18.5 17.3 16.5 18.7 14.6 Z M10 17.5 l0.75 0.85 l0.75 -0.85 Z M12.5 17.5 l0.75 0.85 l0.75 -0.85 Z M11.25 19.3 l0.75 0.85 l0.75 -0.85 Z" />
+              <path class="owl-splash__pupil" fill-rule="evenodd" d="M7.5 11.55 a1.75 1.75 0 1 0 3.5 0 a1.75 1.75 0 1 0 -3.5 0 Z M9.35 10.85 a0.55 0.55 0 1 0 1.1 0 a0.55 0.55 0 1 0 -1.1 0 Z M13 11.55 a1.75 1.75 0 1 0 3.5 0 a1.75 1.75 0 1 0 -3.5 0 Z M14.85 10.85 a0.55 0.55 0 1 0 1.1 0 a0.55 0.55 0 1 0 -1.1 0 Z" />
+            </svg>
+          </div>
+          <p class="owl-splash__name">Owl</p>
+          <div class="owl-splash__bar"></div>
+        </div>
+      </div>
+    </div>
+    <div id="modal-root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

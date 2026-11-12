@@ -1,0 +1,205 @@
+/* ─────────────────────────────────────────────────────────────
+   Dark theme — deep blue-grey surfaces with the Sky blue as accent.
+   Applies when <html data-theme="dark"> (shared/lib/theme.ts). The
+   other rules use :where(), so they win exactly as if the file were global.
+
+   Contrast (WCAG): primary text on surfaces ≥ 13:1, secondary ≥ 7:1,
+   tertiary ≥ 4.5:1. The accent (#7cc0ec) is light, so it's used as text
+   on dark surfaces (8.4:1) and as a fill with dark ink (#0b1e2e, 9:1).
+   ───────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] {
+    --brand: #6cb6e6;
+    --brand-hover: #82c2ec;
+    --brand-active: #5aa8dc;
+    --brand-ink: #0b1e2e;
+    --brand-text: #7cc0ec;
+    --brand-soft: rgba(108, 182, 230, 0.14);
+
+    /* the agent icon: brighter so it stands out on dark */
+    --bot-1: #9ad6f7;
+    --bot-2: #5fb0e4;
+    --bot-3: #2f74b5;
+    --bot-face: #f2f8fd;
+
+    --bg-app: #111418;
+    --bg-surface: #1a1e24;
+    --bg-input: #1f242b;
+    --bg-hover: #242a32;
+    --bg-active: #2b323b;
+    --bg-subtle: #161a1f;
+    --bg-code: #14181d;
+    --bg-code-hdr: #1f242b;
+
+    --border: #2c333c;
+    --border-soft: #242a32;
+    --border-strong: #3b4450;
+
+    --text-pri: #e6e9ed;
+    --text-sec: #a7b1bc;
+    --text-ter: #808b97;
+
+    --accent: #7cc0ec;
+    --accent-hover: #9ccff1;
+    --accent-soft: rgba(108, 182, 230, 0.14);
+    --accent-ring: rgba(108, 182, 230, 0.4);
+    --accent-ink: #0b1e2e;
+    --accent-secondary: #2f3b47;
+    --accent-border: rgba(108, 182, 230, 0.38);
+
+    --danger: #f87171;
+    --danger-hover: #fca5a5;
+    --danger-soft: rgba(248, 113, 113, 0.13);
+    --danger-border: rgba(248, 113, 113, 0.38);
+    --success: #4ade80;
+    --success-soft: rgba(74, 222, 128, 0.11);
+    --success-border: rgba(74, 222, 128, 0.32);
+    --warning: #fbbf24;
+    --warning-soft: rgba(251, 191, 36, 0.13);
+    --warning-ink: #fcd34d;
+    --info-soft: rgba(96, 165, 250, 0.13);
+    --mark-bg: rgba(250, 204, 21, 0.32);
+    --scrollbar: #3b4450;
+    --code-ink: #f5a3c7;
+
+    --tool-purple-bg: rgba(108, 182, 230, 0.14);
+    --tool-purple-fg: #9ccff1;
+    --tool-green-bg: rgba(52, 211, 153, 0.13);
+    --tool-green-fg: #6ee7b7;
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 24px -6px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 24px 60px -12px rgba(0, 0, 0, 0.7);
+
+    /* storage.css (knowledge base) */
+    --bg: #111418;
+    --surface: #1a1e24;
+    --text-primary: #e6e9ed;
+    --text-secondary: #a7b1bc;
+    --text-tertiary: #808b97;
+
+    color-scheme: dark;
+}
+
+:where(:root[data-theme="dark"]) body {
+    background: var(--bg-app);
+    color: var(--text-pri);
+}
+
+/* ── Sidebar: a step darker than the page ── */
+:where(:root[data-theme="dark"]) .sidebar {
+    background: #15191e;
+    border-right: 1px solid var(--border);
+}
+
+:where(:root[data-theme="dark"]) .menu_item.menu_item--active,
+:where(:root[data-theme="dark"]) .menu_item--active {
+    background: var(--brand-soft);
+    color: var(--brand-text);
+}
+
+:where(:root[data-theme="dark"]) .menu_item--active .menu_icon {
+    color: var(--brand-text);
+}
+
+/* ── Primary buttons: light blue with dark ink ── */
+:where(:root[data-theme="dark"]) .ag_btn--primary,
+:where(:root[data-theme="dark"]) .send_btn,
+:where(:root[data-theme="dark"]) .btn--primary,
+:where(:root[data-theme="dark"]) .upload-btn,
+:where(:root[data-theme="dark"]) .wa_away__save {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-ink);
+    box-shadow: none;
+}
+
+:where(:root[data-theme="dark"]) .ag_btn--primary:hover:not(:disabled),
+:where(:root[data-theme="dark"]) .send_btn:hover:not(:disabled),
+:where(:root[data-theme="dark"]) .btn--primary:hover:not(:disabled),
+:where(:root[data-theme="dark"]) .upload-btn:hover,
+:where(:root[data-theme="dark"]) .wa_away__save:hover:not(:disabled) {
+    background: var(--brand-hover);
+    border-color: var(--brand-hover);
+    color: var(--brand-ink);
+}
+
+:where(:root[data-theme="dark"]) .send_btn svg,
+:where(:root[data-theme="dark"]) .ag_btn--primary svg {
+    color: inherit;
+}
+
+:where(:root[data-theme="dark"]) .send_btn:disabled {
+    background: var(--bg-active);
+    color: var(--text-ter);
+}
+
+:where(:root[data-theme="dark"]) .stop_btn {
+    background: var(--text-pri);
+    color: var(--bg-app);
+}
+
+:where(:root[data-theme="dark"]) .ag_tab.is_active {
+    color: var(--brand-text);
+    border-bottom-color: var(--brand);
+}
+
+:where(:root[data-theme="dark"]) .ag_segmented button.is_active {
+    color: var(--brand-text);
+}
+
+/* ── Spots with light colours baked in ── */
+:where(:root[data-theme="dark"]) .user_avatar {
+    background: linear-gradient(135deg, #59a5d8, #2a74a8);
+}
+
+:where(:root[data-theme="dark"]) .welcome__logo {
+    background: linear-gradient(145deg, #1f2a35, #1a232c);
+    box-shadow: inset 0 0 0 1px rgba(108, 182, 230, 0.25);
+}
+
+:where(:root[data-theme="dark"]) .mode_chip button:hover {
+    background: rgba(108, 182, 230, 0.2);
+}
+
+:where(:root[data-theme="dark"]) .ai-icon {
+    background: linear-gradient(135deg, #59a5d8 0%, #2a74a8 100%);
+}
+
+/* Inputs and selects get the input surface. */
+:where(:root[data-theme="dark"]) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+:where(:root[data-theme="dark"]) textarea,
+:where(:root[data-theme="dark"]) select {
+    color: var(--text-pri);
+}
+
+:where(:root[data-theme="dark"]) ::placeholder {
+    color: var(--text-ter);
+}
+
+/* The workflow / Studio canvas (React Flow). */
+:where(:root[data-theme="dark"]) .react-flow {
+    --xy-background-color: var(--bg-app);
+    --xy-background-pattern-color: #2c333c;
+    --xy-edge-stroke: #5b6672;
+    --xy-edge-stroke-selected: var(--accent);
+    --xy-connectionline-stroke: var(--accent);
+    --xy-minimap-background-color: var(--bg-surface);
+    --xy-minimap-mask-background-color: rgba(0, 0, 0, 0.45);
+    --xy-minimap-node-background-color: #3b4450;
+    --xy-minimap-node-stroke-color: transparent;
+    --xy-controls-button-background-color: var(--bg-surface);
+    --xy-controls-button-background-color-hover: var(--bg-hover);
+    --xy-controls-button-color: var(--text-pri);
+    --xy-controls-button-border-color: var(--border);
+    --xy-attribution-background-color: transparent;
+}
+
+:where(:root[data-theme="dark"]) ::selection {
+    background: rgba(108, 182, 230, 0.35);
+}
+
+:where(:root[data-theme="dark"]) ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar);
+}
+

@@ -1,0 +1,461 @@
+/* Inline charts (show_chart). Marks: 2px lines, 4px rounded bar ends,
+   2px surface gaps, recessive grid; text stays in text colours. */
+.ch_card {
+    --ch-surface: #ffffff;
+    --ch-grid: #ececef;
+    --ch-axis: #c9c9d1;
+    --ch-tick: #8a8a96;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 760px;
+    margin: 10px 0 6px;
+    padding: 16px 18px 14px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--ch-surface);
+    box-shadow: var(--shadow-xs);
+}
+
+.ch_card__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.ch_card__icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.ch_card__titles {
+    flex: 1;
+    min-width: 0;
+}
+
+.ch_card__title {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text-pri);
+}
+
+.ch_card__subtitle {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--text-sec);
+}
+
+.ch_card__actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.ch_seg {
+    display: inline-flex;
+    padding: 2px;
+    border-radius: 9px;
+    background: var(--bg-subtle);
+}
+
+.ch_seg button,
+.ch_icon_btn {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 26px;
+    border: none;
+    border-radius: 7px;
+    background: none;
+    color: var(--text-ter);
+    cursor: pointer;
+    transition: background var(--speed), color var(--speed);
+}
+
+.ch_seg button.is_on {
+    background: var(--bg-surface);
+    color: var(--text-pri);
+    box-shadow: var(--shadow-xs);
+}
+
+.ch_icon_btn {
+    width: 30px;
+    height: 30px;
+}
+
+.ch_seg button:hover:not(.is_on),
+.ch_icon_btn:hover {
+    color: var(--text-pri);
+}
+
+.ch_icon_btn:hover {
+    background: var(--bg-hover);
+}
+
+.ch_plot {
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+
+.ch_plot svg {
+    display: block;
+    overflow: visible;
+}
+
+.ch_grid {
+    stroke: var(--ch-grid);
+    stroke-width: 1;
+}
+
+.ch_zero {
+    stroke: var(--ch-axis);
+    stroke-width: 1;
+}
+
+.ch_tick {
+    fill: var(--ch-tick);
+    font: 11.5px var(--font);
+    font-variant-numeric: tabular-nums;
+}
+
+.ch_tick--cat {
+    fill: var(--text-sec);
+}
+
+.ch_axis_title {
+    fill: var(--text-sec);
+    font: 500 11.5px var(--font);
+}
+
+.ch_band {
+    fill: var(--text-pri);
+    opacity: 0.04;
+}
+
+.ch_crosshair {
+    stroke: var(--ch-axis);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+}
+
+.ch_bar {
+    transform-box: fill-box;
+    transform-origin: bottom;
+    animation: ch-grow-y 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    transition: opacity var(--speed);
+}
+
+.ch_bar.is_neg {
+    transform-origin: top;
+}
+
+.ch_bar--h {
+    transform-origin: left;
+    animation-name: ch-grow-x;
+}
+
+.ch_bar.is_dim,
+.ch_slice.is_dim {
+    opacity: 0.55;
+}
+
+.ch_line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: ch-draw 0.9s ease-out forwards;
+}
+
+.ch_area {
+    opacity: 0.16;
+    animation: ch-fade 0.6s ease-out both;
+}
+
+.ch_dot {
+    animation: ch-fade 0.5s 0.4s ease-out both;
+    transition: r var(--speed);
+}
+
+.ch_slice {
+    cursor: pointer;
+    transition: opacity var(--speed), d var(--speed);
+    animation: ch-fade 0.5s ease-out both;
+}
+
+@keyframes ch-grow-y { from { transform: scaleY(0); } }
+@keyframes ch-grow-x { from { transform: scaleX(0); } }
+@keyframes ch-draw { to { stroke-dashoffset: 0; } }
+@keyframes ch-fade { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+    .ch_bar, .ch_line, .ch_area, .ch_dot, .ch_slice {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Tooltip */
+.ch_tip {
+    position: absolute;
+    z-index: 5;
+    min-width: 150px;
+    max-width: 260px;
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-glass);
+    box-shadow: var(--shadow-md);
+    font-size: 12.5px;
+    pointer-events: none;
+    transform: translate(12px, 0);
+    backdrop-filter: blur(6px);
+}
+
+.ch_tip.is_left {
+    transform: translate(calc(-100% - 12px), 0);
+}
+
+.ch_tip__title {
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--text-pri);
+    overflow-wrap: anywhere;
+}
+
+.ch_tip__row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 1px 0;
+    color: var(--text-sec);
+}
+
+.ch_tip__name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ch_tip__row strong {
+    color: var(--text-pri);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.ch_tip__total {
+    margin-top: 4px;
+    padding-top: 5px;
+    border-top: 1px solid var(--border-soft);
+}
+
+.ch_swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    border-radius: 3px;
+}
+
+/* Legend (click to hide/show a series) */
+.ch_legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ch_legend button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 9px;
+    border: none;
+    border-radius: 999px;
+    background: none;
+    font: 13px var(--font);
+    color: var(--text-sec);
+    cursor: pointer;
+    transition: background var(--speed), opacity var(--speed);
+}
+
+.ch_legend button:hover {
+    background: var(--bg-hover);
+    color: var(--text-pri);
+}
+
+.ch_legend button.is_off {
+    opacity: 0.45;
+    text-decoration: line-through;
+}
+
+/* Pie / donut */
+.ch_round {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.ch_center_value {
+    fill: var(--text-pri);
+    font: 600 17px var(--font);
+}
+
+.ch_center_label {
+    fill: var(--text-sec);
+    font: 12px var(--font);
+}
+
+.ch_shares {
+    flex: 1;
+    min-width: 200px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ch_shares button {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 6px 8px;
+    border: none;
+    border-radius: 8px;
+    background: none;
+    font: 13px var(--font);
+    text-align: left;
+    cursor: pointer;
+}
+
+.ch_shares button.is_on {
+    background: var(--bg-hover);
+}
+
+.ch_shares button.is_off {
+    opacity: 0.45;
+}
+
+.ch_shares button.is_off .ch_shares__name {
+    text-decoration: line-through;
+}
+
+.ch_shares__name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-sec);
+}
+
+.ch_shares__value {
+    font-weight: 600;
+    color: var(--text-pri);
+    font-variant-numeric: tabular-nums;
+}
+
+.ch_shares__pct {
+    width: 52px;
+    text-align: right;
+    color: var(--text-ter);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Table view */
+.ch_table_wrap {
+    max-height: 340px;
+    overflow: auto;
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+}
+
+.ch_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.ch_table th,
+.ch_table td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.ch_table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--bg-subtle);
+    font-weight: 600;
+    color: var(--text-sec);
+    font-size: 12px;
+}
+
+.ch_table tbody th {
+    font-weight: 500;
+    color: var(--text-pri);
+}
+
+.ch_table .is_num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.ch_table tbody tr:hover {
+    background: var(--bg-hover);
+}
+
+/* Pending */
+.ch_card--pending .ch_card__title {
+    color: var(--text-sec);
+    font-weight: 500;
+}
+
+.ch_skeleton {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    height: 160px;
+    padding: 8px 6px 0;
+    border-bottom: 1px solid var(--ch-grid);
+}
+
+.ch_skeleton span {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(90deg, var(--bg-subtle), var(--bg-active), var(--bg-subtle));
+    background-size: 200% 100%;
+    animation: ch-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes ch-shimmer {
+    from { background-position: 100% 0; }
+    to { background-position: -100% 0; }
+}
+
+@media (max-width: 600px) {
+    .ch_card {
+        padding: 14px 12px 12px;
+        border-radius: 14px;
+    }
+
+    .ch_round {
+        justify-content: center;
+    }
+}

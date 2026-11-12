@@ -1,0 +1,19 @@
+/* Connect Telegram dialog — the WhatsApp dialog's layout (wa_modal) in Telegram blue. */
+.tg_modal .wa_modal__badge {
+    background: var(--info-soft);
+    color: #229ed9;
+}
+
+.tg_modal .wa_modal__primary,
+.tg_modal .wa_modal__check {
+    background: #229ed9;
+}
+
+.tg_modal .wa_modal__primary:hover {
+    background: #1b8cc2;
+}
+
+.menu_item:hover .menu_icon--telegram,
+.chat_history_source--telegram {
+    color: #229ed9;
+}

@@ -1,0 +1,171 @@
+/* ─────────────────────────────────────────────────────────────
+   Sky theme — buttons and highlights in #59A5D8, white sidebar.
+   Applies when <html data-theme="sky"> (shared/lib/theme.ts). The
+   other rules use :where(), so they win exactly as if the file were global.
+
+   Contrast (WCAG): #59A5D8 is light, so text ON it is dark navy
+   (#0B2A45, 5.4:1) — white would be 2.7:1. Where blue is used AS
+   text (links, active tabs, icons) it's the deeper #2A74A8 (5.0:1).
+   ───────────────────────────────────────────────────────────── */
+:root[data-theme="sky"] {
+    --brand: #59a5d8; /* the chosen colour: button fills */
+    --brand-hover: #4a97cc;
+    --brand-active: #3f8bc0;
+    --brand-ink: #0b2a45; /* text on brand fills */
+    --brand-text: #2a74a8; /* brand as a text colour */
+    --brand-soft: #eaf4fb;
+
+    /* the agent icon */
+    --bot-1: #7cc2ec;
+    --bot-2: #4a97d0;
+    --bot-3: #2b67a6;
+    --bot-face: #ffffff;
+
+    /* chat.css + chat_modern.css */
+    --bg-app: #f5f8fb;
+    --bg-surface: #ffffff;
+    --bg-input: #ffffff;
+    --bg-hover: #eef3f8;
+    --bg-active: #e3ecf4;
+    --bg-subtle: #f2f6fa;
+    --bg-code: #f5f8fb;
+    --bg-code-hdr: #e9eff5;
+
+    --border: #e1e8ef;
+    --border-soft: #eaf0f5;
+    --border-strong: #cfdae4;
+
+    --text-pri: #14202b;
+    --text-sec: #5f6b78;
+    --text-ter: #94a0ac;
+
+    --accent: #2a74a8;
+    --accent-hover: #215f8a;
+    --accent-soft: #eaf4fb;
+    --accent-ring: rgba(89, 165, 216, 0.3);
+    --accent-ink: #ffffff;
+    --accent-secondary: #cfe5f4;
+
+    --tool-purple-bg: #eaf4fb;
+    --tool-purple-fg: #2a74a8;
+
+    --shadow-xs: 0 1px 2px rgba(20, 32, 43, 0.05);
+    --shadow-sm: 0 1px 3px rgba(20, 32, 43, 0.06), 0 1px 2px rgba(20, 32, 43, 0.04);
+    --shadow-md: 0 8px 24px -6px rgba(20, 32, 43, 0.12), 0 2px 6px rgba(20, 32, 43, 0.05);
+    --shadow-lg: 0 24px 60px -12px rgba(20, 32, 43, 0.24);
+
+    /* storage.css (knowledge base) */
+    --bg: #f5f8fb;
+    --surface: #ffffff;
+    --text-primary: #14202b;
+    --text-secondary: #5f6b78;
+    --text-tertiary: #94a0ac;
+
+    color-scheme: light;
+}
+
+:where(:root[data-theme="sky"]) body {
+    background: var(--bg-app);
+    color: var(--text-pri);
+}
+
+/* ── Sidebar: white ── */
+:where(:root[data-theme="sky"]) .sidebar {
+    background: #ffffff;
+    border-right: 1px solid var(--border);
+}
+
+:where(:root[data-theme="sky"]) .menu_item.menu_item--active,
+:where(:root[data-theme="sky"]) .menu_item--active {
+    background: var(--brand-soft);
+    color: var(--brand-text);
+}
+
+:where(:root[data-theme="sky"]) .menu_item--active .menu_icon {
+    color: var(--brand-text);
+}
+
+/* ── Primary buttons: the chosen blue with dark text ── */
+:where(:root[data-theme="sky"]) .ag_btn--primary,
+:where(:root[data-theme="sky"]) .send_btn,
+:where(:root[data-theme="sky"]) .btn--primary,
+:where(:root[data-theme="sky"]) .upload-btn,
+:where(:root[data-theme="sky"]) .wa_away__save {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-ink);
+    box-shadow: 0 1px 3px rgba(42, 116, 168, 0.25);
+}
+
+:where(:root[data-theme="sky"]) .ag_btn--primary:hover:not(:disabled),
+:where(:root[data-theme="sky"]) .send_btn:hover:not(:disabled),
+:where(:root[data-theme="sky"]) .btn--primary:hover:not(:disabled),
+:where(:root[data-theme="sky"]) .upload-btn:hover,
+:where(:root[data-theme="sky"]) .wa_away__save:hover:not(:disabled) {
+    background: var(--brand-hover);
+    border-color: var(--brand-hover);
+    color: var(--brand-ink);
+    box-shadow: 0 2px 8px rgba(42, 116, 168, 0.3);
+}
+
+:where(:root[data-theme="sky"]) .ag_btn--primary:active:not(:disabled),
+:where(:root[data-theme="sky"]) .send_btn:active:not(:disabled) {
+    background: var(--brand-active);
+}
+
+:where(:root[data-theme="sky"]) .send_btn svg,
+:where(:root[data-theme="sky"]) .ag_btn--primary svg {
+    color: inherit;
+}
+
+:where(:root[data-theme="sky"]) .send_btn:disabled {
+    background: var(--border);
+    color: var(--text-ter);
+    box-shadow: none;
+}
+
+:where(:root[data-theme="sky"]) .stop_btn {
+    background: var(--brand-ink);
+    color: #ffffff;
+}
+
+/* Tabs and selected states */
+:where(:root[data-theme="sky"]) .ag_tab.is_active {
+    color: var(--brand-text);
+    border-bottom-color: var(--brand);
+}
+
+:where(:root[data-theme="sky"]) .ag_segmented button.is_active {
+    color: var(--brand-text);
+}
+
+/* ── Spots that had the old indigo hard-coded ── */
+:where(:root[data-theme="sky"]) .user_avatar {
+    background: linear-gradient(135deg, #59a5d8, #2a74a8);
+}
+
+:where(:root[data-theme="sky"]) .welcome__logo {
+    background: linear-gradient(145deg, #eaf4fb, #f3f9fd);
+    box-shadow: inset 0 0 0 1px rgba(89, 165, 216, 0.25);
+}
+
+:where(:root[data-theme="sky"]) .mode_chip button:hover {
+    background: rgba(89, 165, 216, 0.16);
+}
+
+:where(:root[data-theme="sky"]) .source_chip:hover:not(:disabled) {
+    border-color: rgba(42, 116, 168, 0.45);
+}
+
+:where(:root[data-theme="sky"]) .ai-icon {
+    background: linear-gradient(135deg, #59a5d8 0%, #2a74a8 100%);
+    box-shadow: 0 10px 24px -6px rgba(42, 116, 168, 0.5);
+}
+
+:where(:root[data-theme="sky"]) .ai-icon:hover {
+    box-shadow: 0 14px 30px -6px rgba(42, 116, 168, 0.55);
+}
+
+:where(:root[data-theme="sky"]) ::selection {
+    background: rgba(89, 165, 216, 0.3);
+}

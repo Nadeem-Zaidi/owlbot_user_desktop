@@ -1,0 +1,217 @@
+/* Reminders & alerts (reminders, to-dos, web watchers, alerts inbox). */
+
+.rm_bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.rm_tz {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-sec);
+}
+
+.rm_tz .ag_input { width: 170px; padding: 4px 8px; }
+
+.rm_badge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.rm_section { display: grid; gap: 12px; }
+
+.rm_h3 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.rm_link {
+    justify-self: start;
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    font-size: 13px;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+/* add form */
+.rm_add,
+.rm_card {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-surface);
+    box-shadow: var(--shadow-xs);
+}
+
+.rm_add { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
+
+.rm_fields {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 8px;
+}
+
+.rm_fields__notes { grid-column: 1 / -1; }
+
+/* lists */
+.rm_list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rm_task,
+.rm_watch,
+.rm_alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-surface);
+}
+
+.rm_task--edit { display: grid; gap: 10px; }
+.rm_task.is_done .rm_task__text strong { text-decoration: line-through; color: var(--text-sec); }
+.rm_watch.is_paused { opacity: 0.7; }
+.rm_alert.is_unread { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 5%, var(--bg-surface)); }
+
+.rm_check {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    border: 1.5px solid var(--border-strong, var(--text-ter));
+    border-radius: 999px;
+    background: var(--bg-surface);
+    color: #fff;
+    cursor: pointer;
+}
+
+.rm_check:hover { border-color: #16a34a; }
+.rm_check.is_on { border-color: #16a34a; background: #16a34a; }
+
+.rm_task__text {
+    display: grid;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+}
+
+.rm_task__text strong { overflow-wrap: anywhere; }
+
+.rm_task__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+}
+
+.rm_when {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--accent);
+}
+
+.rm_task__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: none;
+}
+
+/* watchers */
+.rm_watch_add__row {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 8px;
+}
+
+.rm_modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.rm_watch_add__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.rm_every {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-sec);
+}
+
+.rm_every .ag_input { width: auto; padding: 5px 8px; }
+
+.rm_watch__icon {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--accent);
+}
+
+.rm_url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    color: var(--text-sec);
+}
+
+.rm_alert__body {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+    color: var(--text-sec);
+}
+
+@media (max-width: 760px) {
+    .rm_add { grid-template-columns: 1fr; }
+    .rm_fields,
+    .rm_watch_add__row { grid-template-columns: 1fr; }
+    .rm_watch,
+    .rm_task { flex-wrap: wrap; }
+}

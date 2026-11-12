@@ -1,0 +1,17 @@
+/* App-wide reset. In the web app it lives in the sign-in stylesheet; the
+   desktop app has no sign-in screen, so it has its own file — loaded at the
+   same point in index.css so nothing else shifts. */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body,
+#root {
+    width: 100%;
+    min-height: 100%;
+}

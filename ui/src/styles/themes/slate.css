@@ -1,0 +1,126 @@
+/* ─────────────────────────────────────────────────────────────
+   Slate theme — cool blue-grey, quiet and businesslike.
+   Applies when <html data-theme="slate"> (shared/lib/theme.ts). The
+   other rules use :where(), so they win exactly as if the file were global.
+
+   Contrast (WCAG): white on the accent #475569 is 7.6:1; the
+   accent as text on the page 7.1:1; primary text 15.6:1,
+   secondary 6.1:1.
+   ───────────────────────────────────────────────────────────── */
+:root[data-theme="slate"] {
+    --tone: #475569;
+    --tone-hover: #334155;
+    --tone-soft: #eef1f5;
+
+    /* the agent icon */
+    --bot-1: #94a3b8;
+    --bot-2: #64748b;
+    --bot-3: #334155;
+    --bot-face: #ffffff;
+
+    --bg-app: #f6f7f9;
+    --bg-surface: #ffffff;
+    --bg-input: #ffffff;
+    --bg-hover: #eef0f3;
+    --bg-active: #e4e7ec;
+    --bg-subtle: #f3f4f6;
+    --bg-code: #f3f4f6;
+    --bg-code-hdr: #e9ecf0;
+
+    --border: #e2e5ea;
+    --border-soft: #eceef2;
+    --border-strong: #cfd4dc;
+
+    --text-pri: #1e2430;
+    --text-sec: #5a6372;
+    --text-ter: #8b93a1;
+
+    --accent: #475569;
+    --accent-hover: #334155;
+    --accent-soft: #eef1f5;
+    --accent-ring: rgba(71, 85, 105, 0.22);
+    --accent-ink: #ffffff;
+    --accent-secondary: #d5dbe3;
+    --accent-border: #cbd3dd;
+
+    --tool-purple-bg: #eef1f5;
+    --tool-purple-fg: #475569;
+
+    --shadow-xs: 0 1px 2px rgba(30, 36, 48, 0.05);
+    --shadow-sm: 0 1px 3px rgba(30, 36, 48, 0.07), 0 1px 2px rgba(30, 36, 48, 0.04);
+    --shadow-md: 0 8px 24px -6px rgba(30, 36, 48, 0.13), 0 2px 6px rgba(30, 36, 48, 0.05);
+    --shadow-lg: 0 24px 60px -12px rgba(30, 36, 48, 0.26);
+
+    /* storage.css (knowledge base) */
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --text-primary: #1e2430;
+    --text-secondary: #5a6372;
+    --text-tertiary: #8b93a1;
+
+    color-scheme: light;
+}
+
+:where(:root[data-theme="slate"]) body {
+    background: var(--bg-app);
+    color: var(--text-pri);
+}
+
+/* ── Sidebar: white, with a accent highlight for the current page ── */
+:where(:root[data-theme="slate"]) .sidebar {
+    background: #ffffff;
+    border-right: 1px solid var(--border);
+}
+
+:where(:root[data-theme="slate"]) .menu_item.menu_item--active,
+:where(:root[data-theme="slate"]) .menu_item--active {
+    background: var(--tone-soft);
+    color: var(--tone);
+}
+
+:where(:root[data-theme="slate"]) .menu_item--active .menu_icon {
+    color: var(--tone);
+}
+
+:where(:root[data-theme="slate"]) .ag_btn--primary,
+:where(:root[data-theme="slate"]) .send_btn,
+:where(:root[data-theme="slate"]) .btn--primary,
+:where(:root[data-theme="slate"]) .upload-btn {
+    box-shadow: 0 1px 3px rgba(71, 85, 105, 0.25);
+}
+
+:where(:root[data-theme="slate"]) .ag_tab.is_active {
+    color: var(--tone);
+    border-bottom-color: var(--tone);
+}
+
+:where(:root[data-theme="slate"]) .ag_segmented button.is_active {
+    color: var(--tone);
+}
+
+/* ── Spots with the old indigo baked in ── */
+:where(:root[data-theme="slate"]) .user_avatar {
+    background: linear-gradient(135deg, #64748b, #334155);
+}
+
+:where(:root[data-theme="slate"]) .welcome__logo {
+    background: linear-gradient(145deg, #eef1f5, #f6f8fa);
+    box-shadow: inset 0 0 0 1px rgba(71, 85, 105, 0.2);
+}
+
+:where(:root[data-theme="slate"]) .mode_chip button:hover {
+    background: rgba(71, 85, 105, 0.12);
+}
+
+:where(:root[data-theme="slate"]) .source_chip:hover:not(:disabled) {
+    border-color: rgba(71, 85, 105, 0.4);
+}
+
+:where(:root[data-theme="slate"]) .ai-icon {
+    background: linear-gradient(135deg, #64748b 0%, #334155 100%);
+    box-shadow: 0 10px 24px -6px rgba(51, 65, 85, 0.45);
+}
+
+:where(:root[data-theme="slate"]) ::selection {
+    background: rgba(71, 85, 105, 0.2);
+}

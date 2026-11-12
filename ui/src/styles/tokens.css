@@ -1,0 +1,95 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Design tokens
+   Every colour, size, radius, shadow and font the UI uses, as CSS
+   variables. Components read these with var(--…) — never hard-code a
+   value that exists here. Themes (styles/themes/*) override them.
+   ═══════════════════════════════════════════════════════════════════ */
+:root {
+    /* ── Surfaces ── */
+    --bg-app: #f7f7f8;
+    --bg-surface: #ffffff;
+    --bg-input: #ffffff;
+    --bg-hover: #f0f0f2;
+    --bg-active: #e9e9ec;
+    --bg-subtle: #f4f4f6;
+    --bg-code: #f6f6f8;
+    --bg-code-hdr: #ededf1;
+
+    /* ── Borders ── */
+    --border: #e4e4e8;
+    --border-soft: #ececef;
+    --border-strong: #d4d4da;
+
+    /* ── Text ── */
+    --text-pri: #18181b;
+    --text-sec: #5f5f6b;
+    --text-ter: #9a9aa5;
+
+    /* ── Accent ── */
+    --accent: #4f46e5;
+    --accent-hover: #4338ca;
+    --accent-soft: #eef0ff;
+    --accent-ring: rgba(79, 70, 229, 0.18);
+    --accent-ink: #ffffff;
+    --accent-secondary: #d6d6de;
+
+    /* ── Status ── */
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --danger-soft: #fef2f2;
+    --success: #16a34a;
+    /* Soft tints for notices, badges and states (the dark theme swaps them). */
+    --success-soft: #edf9f1;
+    --success-border: #c7eed6;
+    --danger-border: #f4c2c2;
+    --warning: #d97706;
+    --warning-soft: #fff6e8;
+    --warning-ink: #8a5a00;
+    --info-soft: #eef6ff;
+    --accent-border: #dcd9fb;
+    --mark-bg: #fff1a8;
+    --scrollbar: #d4d4da;
+    --code-ink: #b4235a; /* inline `code` in answers */
+    /* The default agent icon (shared/ui/agent_avatar.tsx): tile gradient, face. */
+    --bot-1: #a7a2f7;
+    --bot-2: #6d63ea;
+    --bot-3: #4338ca;
+    --bot-face: #ffffff;
+    /* Glassy bars over scrolling content (top bar, save bar). */
+    --bg-glass: color-mix(in srgb, var(--bg-surface) 88%, transparent);
+    /* Document previews stay "paper" white in every theme. */
+    --paper: #ffffff;
+    --paper-ink: #111827;
+    --tool-purple-bg: #eeedfc;
+    --tool-purple-fg: #4f46e5;
+    --tool-green-bg: #e5f7ef;
+    --tool-green-fg: #0f8a5f;
+
+    /* ── Shape & motion ── */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 22px;
+    --shadow-xs: 0 1px 2px rgba(16, 16, 24, 0.05);
+    --shadow-sm: 0 1px 3px rgba(16, 16, 24, 0.06), 0 1px 2px rgba(16, 16, 24, 0.04);
+    --shadow-md: 0 8px 24px -6px rgba(16, 16, 24, 0.12), 0 2px 6px rgba(16, 16, 24, 0.05);
+    --shadow-lg: 0 24px 60px -12px rgba(16, 16, 24, 0.25);
+    --speed: 0.18s;
+
+    /* ── Type ── */
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-brand: 'Sora', 'Inter', system-ui, sans-serif;
+    --font-mono: ui-monospace, 'JetBrains Mono', 'Fira Code', monospace;
+
+    /* ── Layout ── */
+    --sb-w: 256px; /* sidebar, expanded */
+    --sb-col-w: 52px; /* sidebar, collapsed rail */
+    --chat-panel-w: clamp(360px, 32vw, 460px); /* knowledge base: docked chat panel */
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+    /* ── Knowledge base (storage) aliases — prefer the names above in new code ── */
+    --bg: #f7f8fb;
+    --surface: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-tertiary: #9ca3af;
+}

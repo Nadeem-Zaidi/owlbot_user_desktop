@@ -1,0 +1,60 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Style entry point — the ONLY stylesheet imported from TypeScript
+   (src/main.tsx). The order below IS the cascade order: when two rules
+   have the same specificity, the later file wins. Components never import
+   CSS themselves, so this order can't drift with the module graph.
+   Fonts load from index.html (<link>), not @import.
+
+   Conventions (docs/frontend-architecture.md):
+   - tokens, base and layout first, then the shared UI kit, then features;
+   - a feature's styles live in features/<name>/styles/ and are listed here;
+   - only the theme (last) overrides other files' rules on purpose.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Vendor — the workflow canvas (React Flow) base styles; ours override below. */
+@import "@xyflow/react/dist/style.css";
+
+/* Foundation */
+@import "./tokens.css";
+@import "./base.css";
+@import "./layout.css";
+
+/* Shared UI */
+@import "../shared/ui/ui.css";
+
+/* Features */
+@import "./reset.css";
+@import "../features/storage/styles/storage.css";
+@import "../features/chat/styles/sidebar.css";
+@import "../features/chat/styles/chat_page.css";
+@import "../features/chat/styles/messages.css";
+@import "../features/chat/styles/composer.css";
+@import "../features/whatsapp/styles/whatsapp.css";
+@import "../features/telegram/styles/telegram.css";
+@import "../features/skills/styles/skills.css";
+@import "../features/pipelines/styles/workflows.css";
+@import "../features/documents/styles/documents.css";
+@import "../features/charts/styles/charts.css";
+@import "../features/marketplace/styles/marketplace.css";
+@import "../features/agents/styles/agents.css";
+@import "../features/pipelines/styles/pipelines.css";
+@import "../features/studio/styles/studio.css";
+@import "../features/automations/styles/automations.css";
+@import "../features/local_knowledge/styles/local_knowledge.css";
+@import "../features/portable/styles/portable.css";
+@import "../features/workspaces/styles/workspaces.css";
+@import "../features/native_agents/styles/native_agents.css";
+@import "../features/billing/styles/billing.css";
+@import "../features/insights/styles/insights.css";
+@import "../features/settings/styles/settings.css";
+@import "../features/artifacts/styles/artifacts.css";
+
+/* Themes — each applies only under <html data-theme="…"> (picked in
+   Settings → Appearance; see shared/lib/theme.ts). No attribute = the
+   base tokens above ("Indigo"). */
+@import "./themes/sky.css";
+@import "./themes/slate.css";
+@import "./themes/sage.css";
+@import "./themes/graphite.css";
+@import "./themes/rust.css";
+@import "./themes/dark.css";

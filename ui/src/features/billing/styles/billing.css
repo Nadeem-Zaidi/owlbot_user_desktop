@@ -1,0 +1,230 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Billing
+   Plans and billing page.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Plan & billing page — builds on agents.css (ag_*) and insights.css (use_table). */
+.bl_page {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.bl_loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-sec);
+}
+
+.bl_banner, .bl_notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13.5px;
+}
+
+.bl_banner {
+    background: var(--bg-subtle);
+    border: 1px dashed var(--border-strong);
+    color: var(--text-sec);
+}
+
+.bl_notice {
+    background: var(--success-soft);
+    border: 1px solid var(--success-border);
+    color: #146c3a;
+}
+
+.bl_current__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.bl_current__plan {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 2px 0;
+    font-size: 22px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+}
+
+.bl_status {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: capitalize;
+    background: var(--bg-hover);
+    color: var(--text-sec);
+}
+
+.bl_status--active, .bl_status--authenticated, .bl_status--captured {
+    background: var(--success-soft);
+    color: #146c3a;
+}
+
+.bl_status--pending, .bl_status--ending {
+    background: var(--warning-soft);
+    color: #8a5300;
+}
+
+.bl_status--halted, .bl_status--failed {
+    background: var(--danger-soft);
+    color: #a12b2b;
+}
+
+.bl_meter {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bl_meter__labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 13.5px;
+}
+
+.bl_meter__track {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--bg-hover);
+    overflow: hidden;
+}
+
+.bl_meter__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accent);
+    transition: width 0.3s;
+}
+
+.bl_meter__fill.is_high {
+    background: #d9822b;
+}
+
+.bl_period {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.bl_plans {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.bl_plan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--bg-surface);
+}
+
+.bl_plan.is_featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.bl_plan.is_current {
+    background: var(--bg-subtle);
+}
+
+.bl_plan__flag {
+    position: absolute;
+    top: -11px;
+    left: 20px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+.bl_plan__name {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 650;
+}
+
+.bl_plan__price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.bl_plan__price strong {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+.bl_plan__billed {
+    margin: 0;
+}
+
+.bl_plan__tokens {
+    margin: 8px 0 2px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.bl_plan__features {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    font-size: 13.5px;
+}
+
+.bl_plan__features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+}
+
+.bl_plan__features svg {
+    flex: none;
+    margin-top: 2px;
+    color: var(--accent);
+}
+
+.bl_plan .ag_btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.bl_secure {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+@media (max-width: 860px) {
+    .bl_plans {
+        grid-template-columns: 1fr;
+    }
+}

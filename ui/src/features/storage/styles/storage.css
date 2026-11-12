@@ -1,0 +1,1594 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Knowledge base
+   File explorer, uploads and the docked chat panel.
+   ═══════════════════════════════════════════════════════════════════ */
+
+* {
+    box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════
+   APP SHELL
+   ═══════════════════════════════════════ */
+.app-shell {
+    display: flex;
+    height: 100vh;
+    /* dvh tracks the mobile browser's real visible height as the URL bar
+       shows/hides, so nothing gets pushed below the fold */
+    height: 100dvh;
+    width: 100%;
+    overflow: hidden;
+    background: var(--bg);
+}
+
+.storage-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px clamp(14px, 3vw, 32px) 28px;
+    /* Columns respond to the space this pane actually has (which shrinks
+       when the chat panel docks open), not just the window width */
+    container-type: inline-size;
+    container-name: storage;
+}
+
+/* ═══════════════════════════════════════
+   HEADER (back · title · actions)
+   ═══════════════════════════════════════ */
+.storage-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.storage-header__back {
+    flex-shrink: 0;
+    margin-left: -6px;
+}
+
+.storage-header__titles {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ═══════════════════════════════════════
+   SEARCH BAR
+   ═══════════════════════════════════════ */
+.storage-top-bar {
+    display: flex;
+    margin-top: 18px;
+    flex-shrink: 0;
+}
+
+.storage-top-bar__search_bar {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--surface);
+    border-radius: 9999px;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    box-sizing: border-box;
+    max-width: 760px;
+    box-shadow: var(--shadow-sm);
+}
+
+.storage-top-bar__search_bar:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.search-icon-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    color: var(--text-tertiary);
+    padding-left: 10px;
+}
+
+.sparkle-icon {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    color: var(--accent);
+}
+
+.search-input {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 15px;
+    padding: 0.625rem 0.75rem;
+    font-family: inherit;
+    width: 100%;
+    min-width: 0;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* type="search" adds a native clear "x" — we render our own */
+.search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}
+
+.search-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.search-input__clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    margin-right: 6px;
+    border: none;
+    border-radius: 9999px;
+    background-color: var(--border);
+    color: var(--text-secondary, var(--text-tertiary));
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.search-input__clear:hover {
+    background-color: var(--accent-soft);
+    color: var(--accent);
+}
+
+.action-icons {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    gap: 0.5rem;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.icon-button {
+    border: 1px solid transparent;
+    outline: none;
+    background: transparent;
+    color: var(--text-secondary);
+    width: 38px;
+    height: 38px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.icon-button:hover {
+    background: var(--border-soft);
+    color: var(--text-primary);
+}
+
+.icon-button--sm {
+    width: 28px;
+    height: 28px;
+}
+
+.action-icons__divider {
+    width: 1px;
+    height: 22px;
+    background: var(--border);
+    margin: 0 4px;
+}
+
+/* ═══════════════════════════════════════
+   HEADING
+   ═══════════════════════════════════════ */
+.storage-heading {
+    font-size: clamp(18px, 1.2rem + 0.6vw, 24px);
+    font-weight: 650;
+    line-height: 1.25;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+}
+
+.storage-subheading {
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════
+   FILE LIST — card container
+   ═══════════════════════════════════════ */
+.storage-file-list-container {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-primary);
+    width: 100%;
+    margin-top: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* Sized to content but allowed to shrink into whatever height is left
+       below the header — rows then scroll inside the card while the header
+       row and pager stay put. No hard-coded viewport offsets. */
+    flex: 0 1 auto;
+    min-height: 220px;
+}
+
+/* Sticky header row / selection bar so it stays visible while rows scroll */
+.storage-file-list-container > .list-header,
+.storage-file-list-container > .selection-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--surface);
+    flex-shrink: 0;
+}
+
+/* Scrollable rows area */
+.storage-file-list-body {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Pagination bar pinned to the bottom of the card */
+.storage-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--surface);
+}
+
+.storage-pagination__info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.storage-pagination__spinner {
+    color: var(--text-tertiary);
+}
+
+.storage-pagination__controls {
+    display: flex;
+    gap: 8px;
+}
+
+.file-row {
+    display: grid;
+    grid-template-columns: 40px 2fr 1.3fr 1fr 1fr 56px;
+    align-items: center;
+}
+
+.list-header {
+    font-weight: 600;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-tertiary);
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-right: 16px;
+    font-size: 13.5px;
+    min-width: 0;
+}
+
+.checkbox-cell {
+    padding-right: 0;
+}
+
+.list-item {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border-soft);
+    transition: background-color 0.12s ease;
+}
+
+.list-item:last-child {
+    border-bottom: none;
+}
+
+.list-item:hover {
+    background-color: var(--bg-hover);
+    cursor: pointer;
+}
+
+.list-item--selected {
+    background-color: var(--accent-soft);
+}
+
+.list-item--selected:hover {
+    background-color: var(--accent-soft);
+}
+
+.name-cell {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.name-cell__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.name-cell__meta {
+    display: none;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    margin-top: 1px;
+}
+
+.action-cell {
+    justify-content: flex-end;
+    padding-right: 0;
+}
+
+.row-delete-btn {
+    opacity: 0;
+    color: var(--text-tertiary);
+}
+
+.list-item:hover .row-delete-btn,
+.row-delete-btn:focus-visible {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    /* Touch screens have no hover — keep the delete action reachable */
+    .row-delete-btn {
+        opacity: 1;
+    }
+
+    .list-item:hover {
+        background-color: transparent;
+    }
+
+    .list-item--selected:hover {
+        background-color: var(--accent-soft);
+    }
+}
+
+.row-delete-btn:hover {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+}
+
+/* File type icon colors */
+.file-icon--pdf {
+    color: #dc2626;
+    flex-shrink: 0;
+}
+
+.file-icon--doc {
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+.file-icon--sheet {
+    color: #16a34a;
+    flex-shrink: 0;
+}
+
+.file-icon--image {
+    color: #9333ea;
+    flex-shrink: 0;
+}
+
+.file-icon--code {
+    color: #ea580c;
+    flex-shrink: 0;
+}
+
+.file-icon--default {
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+}
+
+.file-icon--error {
+    color: var(--danger);
+    flex-shrink: 0;
+}
+
+/* Avatar — same look as the account avatar in the sidebar (Sky theme) */
+.avatar {
+    width: 26px;
+    height: 26px;
+    background: linear-gradient(135deg, #59a5d8, #2a74a8);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+}
+
+.owner-cell {
+    gap: 8px;
+}
+
+/* ═══════════════════════════════════════
+   CHECKBOXES
+   ═══════════════════════════════════════ */
+.selection-bar__checkbox {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selection-bar__checkbox:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.checkbox--checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* ═══════════════════════════════════════
+   SELECTION TOOLBAR (replaces header row)
+   ═══════════════════════════════════════ */
+.selection-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--accent-soft);
+    border-bottom: 1px solid var(--border);
+}
+
+.selection-bar__count {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.selection-bar__spacer {
+    flex: 1;
+}
+
+/* ═══════════════════════════════════════
+   BUTTONS (shared)
+   ═══════════════════════════════════════ */
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+    white-space: nowrap;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn--sm {
+    height: 30px;
+    padding: 0 12px;
+    font-size: 12.5px;
+}
+
+.btn--primary {
+    background: linear-gradient(135deg, var(--accent), #7c6ff0);
+    color: var(--accent-ink);
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.28);
+}
+
+.btn--primary:hover:not(:disabled) {
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.36);
+}
+
+.btn--danger {
+    background: var(--danger);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+}
+
+.btn--danger:hover:not(:disabled) {
+    background: var(--danger-hover);
+}
+
+.btn--ghost {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn--ghost:hover:not(:disabled) {
+    background: var(--border-soft);
+}
+
+/* ═══════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════ */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 56px 24px;
+    color: var(--text-tertiary);
+    text-align: center;
+}
+
+.empty-state svg {
+    margin-bottom: 6px;
+    opacity: 0.7;
+}
+
+.empty-state__title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.empty-state__subtitle {
+    font-size: 13px;
+    color: var(--text-tertiary);
+}
+
+.empty-state--compact {
+    padding: 24px;
+    font-size: 13px;
+}
+
+/* ═══════════════════════════════════════
+   SKELETON LOADING
+   ═══════════════════════════════════════ */
+.skeleton-row {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.skeleton {
+    background: linear-gradient(90deg, var(--border-soft) 25%, var(--bg-active) 37%, var(--border-soft) 63%);
+    background-size: 400% 100%;
+    animation: skeleton-shimmer 1.4s ease infinite;
+    border-radius: 6px;
+}
+
+.skeleton--checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+}
+
+.skeleton--icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.skeleton--text {
+    height: 12px;
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0 50%;
+    }
+}
+
+/* ═══════════════════════════════════════
+   MODAL (shared: upload confirm + delete confirm)
+   ═══════════════════════════════════════ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.45);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: modal-fade-in 0.15s ease-out;
+}
+
+@keyframes modal-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    width: 460px;
+    max-width: 90vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    animation: modal-scale-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.97) translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal__header-text {
+    min-width: 0;
+}
+
+.modal__title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-primary);
+}
+
+.modal__subtitle {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.modal__actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.modal__body {
+    overflow-y: auto;
+    padding: 10px;
+    flex: 1;
+}
+
+.file-review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.file-review-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+}
+
+.file-review-row:hover {
+    background: var(--border-soft);
+}
+
+.file-review-row__text {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-review-row__name {
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.file-review-row__meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+}
+
+.file-review-row__meta--error {
+    color: var(--danger);
+}
+
+.inline-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: var(--radius-sm);
+    background: var(--danger-soft);
+    color: var(--danger);
+    font-size: 12.5px;
+}
+
+/* ═══════════════════════════════════════
+   AI TRIGGER
+   ═══════════════════════════════════════ */
+.ai-icon {
+    /* Was `position: absolute`, anchored to its parent container rather
+       than the actual screen. A mobile browser's visible viewport height
+       changes as the address bar shows/hides, but the container's CSS
+       height doesn't track that the same way — so the button could end up
+       positioned below the fold, visible only as a sliver at the very
+       bottom edge. `fixed` anchors it to the real viewport instead, so it
+       reliably sits in the bottom-right corner regardless of page height
+       or scroll position. */
+
+    /* Extended pill ("icon + Ask AI") on roomy screens, collapses to a
+       round button on phones — see the container query further down. */
+    position: fixed;
+    right: 28px;
+    bottom: calc(28px + var(--safe-bottom));
+    z-index: 50;
+    height: 52px;
+    padding: 0 22px 0 18px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
+    box-shadow: 0 10px 24px -6px rgba(79, 70, 229, 0.55),
+        0 2px 6px rgba(17, 24, 39, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+    animation: ai-icon-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ai-icon:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow: 0 14px 30px -6px rgba(79, 70, 229, 0.6),
+        0 3px 8px rgba(17, 24, 39, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.ai-icon:active {
+    transform: scale(0.96);
+}
+
+.ai-icon:focus-visible {
+    outline: 3px solid var(--accent-soft);
+    outline-offset: 3px;
+}
+
+.ai-icon svg {
+    flex-shrink: 0;
+}
+
+.ai-icon__label {
+    white-space: nowrap;
+}
+
+@keyframes ai-icon-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ═══════════════════════════════════════
+   CHAT SIDE PANEL
+   ═══════════════════════════════════════ */
+.chat-side-panel {
+    flex-shrink: 0;
+    width: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    box-shadow: -2px 0 12px rgba(0, 0, 0, 0.04);
+    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.chat-side-panel--open {
+    width: var(--chat-panel-w);
+}
+
+.chat-side-panel__inner {
+    position: relative;
+    width: var(--chat-panel-w);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-side-panel__close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    z-index: 2;
+    width: 30px;
+    height: 30px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.13s, color 0.13s, transform 0.13s;
+}
+
+.chat-side-panel__close:hover {
+    background: var(--border-soft);
+    color: var(--text-primary);
+    transform: rotate(90deg);
+}
+
+.chat-side-panel__body {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+}
+
+.chat-side-panel__body .chat_main {
+    height: 100%;
+    width: 100%;
+}
+
+.chat-side-panel__body .sidebar {
+    display: none;
+}
+
+/* ═══════════════════════════════════════
+   UPLOAD BUTTON + DROPDOWN
+   ═══════════════════════════════════════ */
+.upload-menu {
+    position: relative;
+}
+
+.upload-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 14px 0 16px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), #7c6ff0);
+    color: var(--accent-ink);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.28);
+    transition: box-shadow 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.upload-btn:hover {
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.36);
+}
+
+.upload-btn:active {
+    transform: scale(0.97);
+}
+
+.upload-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.upload-btn__chevron {
+    transition: transform 0.15s ease;
+}
+
+.upload-btn__chevron--open {
+    transform: rotate(180deg);
+}
+
+.upload-menu__dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 240px;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    padding: 6px;
+    z-index: 60;
+    animation: upload-menu-in 0.14s ease-out;
+}
+
+@keyframes upload-menu-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.upload-menu__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 10px;
+    background: none;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-align: left;
+    color: var(--text-primary);
+    transition: background 0.12s ease;
+}
+
+.upload-menu__item:hover {
+    background: var(--border-soft);
+}
+
+.upload-menu__item svg {
+    margin-top: 2px;
+    flex-shrink: 0;
+    color: var(--accent);
+}
+
+.upload-menu__item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.upload-menu__item-text span {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.upload-menu__item-text small {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════
+   UPLOAD MANAGER
+   ═══════════════════════════════════════ */
+.upload-manager {
+    position: absolute;
+    bottom: 24px;
+    right: 100px;
+    width: 320px;
+    max-height: 400px;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 40;
+    border: 1px solid var(--border);
+    animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.upload-manager__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+}
+
+.upload-manager__header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.upload-manager__close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.upload-manager__close:hover {
+    background: var(--border-soft);
+    color: var(--text-primary);
+}
+
+.upload-manager__clear {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.upload-manager__body {
+    overflow-y: auto;
+    padding: 8px 0;
+    max-height: 300px;
+}
+
+.upload-manager__item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    gap: 12px;
+}
+
+.upload-manager__item:hover {
+    background: var(--bg);
+}
+
+.upload-manager__item-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: 1px;
+}
+
+.upload-manager__item-name {
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.upload-manager__item-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+}
+
+.upload-manager__item-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.upload-manager__retry {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+}
+
+@container storage (max-width: 980px) {
+    /* ═══════════════════════════════════════
+   RESPONSIVE — FILE TABLE (container queries)
+   Keyed to the width of .storage-main itself, so the table adapts the
+   same way whether the window is narrow or the chat panel has docked
+   open and eaten half the space. Less important columns drop out first;
+   the date folds under the file name once its column is gone.
+   ═══════════════════════════════════════ */
+    .file-row {
+        grid-template-columns: 40px 2fr 1.3fr 1.1fr 48px;
+    }
+
+    .owner-cell {
+        display: none;
+    }
+}
+
+@container storage (max-width: 760px) {
+    .file-row {
+        grid-template-columns: 40px 1fr 140px 48px;
+    }
+
+    .date-cell {
+        display: none;
+    }
+
+    .name-cell__meta {
+        display: block;
+    }
+}
+
+@container storage (max-width: 560px) {
+    .file-row {
+        grid-template-columns: 34px 1fr auto 40px;
+    }
+
+    /* Icon-only status on phones; the tooltip / label is still there for screen readers. */
+    .rag-badge__label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    .date-cell {
+        display: none;
+    }
+
+    .name-cell__meta {
+        display: block;
+    }
+
+    .list-header {
+        padding: 12px 12px;
+    }
+
+    .list-item,
+    .skeleton-row {
+        padding: 10px 12px;
+    }
+
+    .cell {
+        padding-right: 10px;
+        font-size: 14px;
+    }
+
+    .action-cell {
+        padding-right: 0;
+    }
+
+    .selection-bar {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .storage-pagination {
+        padding: 10px 12px;
+    }
+
+    /* Collapse the extended "Ask AI" pill to a round button */
+    .ai-icon {
+        width: 56px;
+        height: 56px;
+        padding: 0;
+        gap: 0;
+    }
+
+    .ai-icon__label {
+        display: none;
+    }
+
+    .ai-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@container storage (max-width: 420px) {
+    /* Upload stays; the two secondary actions make room for the title */
+    .action-icons > .icon-button,
+    .action-icons__divider {
+        display: none;
+    }
+
+    .storage-subheading {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 900px) {
+    /* ═══════════════════════════════════════
+   RESPONSIVE — LAYOUT (viewport)
+   ═══════════════════════════════════════ */
+
+    /* Tablet & phone: chat becomes a full-screen sheet instead of a docked
+   column that would squeeze the file list to nothing. */
+    .chat-side-panel {
+        border-left: none;
+        transition: none;
+    }
+
+    .chat-side-panel--open {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 100;
+        animation: chat-sheet-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .chat-side-panel__inner {
+        width: 100%;
+        padding-bottom: var(--safe-bottom);
+    }
+
+    .chat-side-panel__close {
+        top: 10px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+    }
+
+    /* Was anchored to .storage-main; on mobile that container can be
+       taller than the visible viewport, so pin it to the screen instead. */
+    .upload-manager {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: calc(12px + var(--safe-bottom));
+        width: auto;
+        max-width: 480px;
+        margin: 0 auto;
+        max-height: 60dvh;
+        z-index: 60;
+    }
+
+    .upload-manager__body {
+        flex: 1;
+        min-height: 0;
+        max-height: none;
+    }
+}
+
+@keyframes chat-sheet-in {
+    from {
+        transform: translateY(24px);
+        opacity: 0;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .storage-main {
+        padding-top: 12px;
+        padding-bottom: calc(96px + var(--safe-bottom)); /* clear the FAB */
+    }
+
+    .storage-header {
+        gap: 8px;
+    }
+
+    .storage-top-bar,
+    .storage-file-list-container {
+        margin-top: 14px;
+    }
+
+    .upload-btn {
+        height: 40px;
+        padding: 0 12px;
+        gap: 4px;
+    }
+
+    .upload-btn span {
+        display: none;
+    }
+
+    .icon-button {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* 16px stops iOS Safari from zooming the page on focus */
+    .search-input {
+        font-size: 16px;
+        padding: 0.6rem 0.5rem;
+    }
+
+    .storage-file-list-container {
+        border-radius: var(--radius-md);
+    }
+
+    .ai-icon {
+        right: 16px;
+        bottom: calc(16px + var(--safe-bottom));
+    }
+
+    /* Hide the AI button while uploads show — they share the corner */
+    .upload-manager ~ .ai-icon {
+        display: none;
+    }
+
+    /* Dialogs become bottom sheets with full-width, thumb-sized actions */
+    .modal-overlay {
+        align-items: flex-end;
+    }
+
+    .modal {
+        width: 100%;
+        max-width: 100%;
+        max-height: 88dvh;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        padding-bottom: var(--safe-bottom);
+        animation: modal-sheet-in 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal__header {
+        padding: 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .modal__actions {
+        width: 100%;
+        order: 2;
+    }
+
+    .modal__actions .btn {
+        flex: 1;
+        justify-content: center;
+        height: 42px;
+    }
+
+    .file-review-row {
+        padding: 10px 8px;
+    }
+
+    .file-review-row .icon-button--sm {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@keyframes modal-sheet-in {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ai-icon,
+    .chat-side-panel,
+    .chat-side-panel--open,
+    .modal,
+    .upload-manager {
+        animation: none;
+        transition: none;
+    }
+}
+
+.upload-manager__retry:hover {
+    color: var(--text-primary);
+}
+
+.spinner-icon {
+    animation: spin 1s linear infinite;
+}
+
+.text-blue-500 {
+    color: #3b82f6;
+}
+
+.text-green-500 {
+    color: var(--success);
+}
+
+.text-red-500 {
+    color: var(--danger);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── AI search (RAG) status column ── */
+.rag-badge,
+.rag-index-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px 3px 7px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+
+.rag-badge--indexed {
+    color: #15803d;
+    background: var(--success-soft);
+    border-color: var(--success-border);
+}
+
+.rag-badge--copy,
+.rag-badge--none {
+    color: var(--text-tertiary);
+    background: transparent;
+    border-color: var(--border);
+}
+
+.rag-badge--busy {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.rag-index-btn {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.rag-index-btn:hover {
+    background: var(--accent);
+    color: var(--accent-ink);
+}
+
+.rag-index-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.index-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent);
+}
+
+.index-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    border: 1px solid;
+}
+
+.index-notice > span {
+    flex: 1;
+    min-width: 0;
+}
+
+.index-notice--success {
+    color: #15803d;
+    background: var(--success-soft);
+    border-color: var(--success-border);
+}
+
+.index-notice--error {
+    color: var(--danger);
+    background: var(--danger-soft);
+    border-color: var(--danger-border);
+}
+
+.index-notice__close {
+    display: flex;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 2px;
+    opacity: 0.7;
+}
+
+.index-notice__close:hover {
+    opacity: 1;
+}

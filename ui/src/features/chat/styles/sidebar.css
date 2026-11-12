@@ -1,0 +1,1112 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Sidebar
+   Navigation, Recents, account menu; collapsed rail and mobile drawer.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.sidebar {
+    width: var(--sb-w);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+    transition: width var(--speed) cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--bg-app);
+    border-right: 1px solid var(--border-soft);
+}
+
+.sidebar.collapsed {
+    width: var(--sb-col-w);
+}
+
+/* ── Top bar ── */
+.sidebar_topsection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 54px;
+    overflow: hidden;
+    padding: 16px 12px 10px 16px;
+}
+
+.sidebar.collapsed .sidebar_topsection {
+    justify-content: center;
+}
+
+.sidebar_brand {
+    font-family: var(--font-brand);
+    letter-spacing: -0.01em;
+    color: var(--text-pri);
+    white-space: nowrap;
+    flex: 1;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity var(--speed) ease, transform var(--speed) ease;
+    overflow: hidden;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.sidebar.collapsed .sidebar_brand {
+    opacity: 0;
+    transform: translateX(-6px);
+    pointer-events: none;
+    width: 0;
+    flex: 0;
+}
+
+.toggle_btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    color: var(--text-sec);
+    transition: background 0.13s, color 0.13s;
+    font-size: 14px;
+}
+
+.toggle_btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-pri);
+}
+
+/* ── Nav menu ── */
+.menu {
+    list-style: none;
+    padding: 4px 10px 8px;
+}
+
+.menu_item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: background 0.12s;
+    font-size: 13.5px;
+    padding: 8px 10px;
+    color: var(--text-pri);
+    border-radius: var(--radius-sm);
+}
+
+.menu_item:hover {
+    background: var(--bg-hover);
+}
+
+.menu_icon {
+    font-size: 13px;
+    min-width: 18px;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+    color: var(--text-sec);
+    transition: color 0.12s;
+}
+
+.menu_item:hover .menu_icon {
+    color: var(--accent);
+}
+
+.menu_item span {
+    opacity: 1;
+    transition: opacity var(--speed) ease;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebar.collapsed .menu_item {
+    justify-content: center;
+    padding: 8px 0;
+}
+
+.sidebar.collapsed .menu_item span {
+    opacity: 0;
+    width: 0;
+    pointer-events: none;
+}
+
+/* ── Chat history list ── */
+.sidebar_chat_section {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-top: none;
+    padding: 0 10px 8px;
+}
+
+.sidebar_chat_section::-webkit-scrollbar {
+    width: 3px;
+}
+
+.sidebar_chat_section::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar_chat_section::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+/* Explicit hover (same colour as the global scrollbar hover in base.css). */
+.sidebar_chat_section::-webkit-scrollbar-thumb:hover {
+    background: var(--border-strong);
+}
+
+.chat_section_label {
+    white-space: nowrap;
+    overflow: hidden;
+    opacity: 1;
+    max-height: 40px;
+    transition: opacity var(--speed) ease,
+        max-height var(--speed) ease,
+        padding var(--speed) ease;
+    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+    color: var(--text-ter);
+    padding: 14px 10px 6px;
+}
+
+.sidebar.collapsed .chat_section_label {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    pointer-events: none;
+}
+
+.chat_history_item {
+    margin-bottom: 1px;
+    cursor: pointer;
+    transition: background 0.12s;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+}
+
+.chat_history_item:hover {
+    background: var(--bg-hover);
+}
+
+.chat_history_active {
+    background: var(--accent-soft);
+}
+
+.chat_history_active:hover {
+    background: var(--accent-soft);
+}
+
+.chat_history_title {
+    font-weight: 400;
+    display: block;
+    line-height: 1.5;
+    opacity: 1;
+    transition: opacity var(--speed) ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1 1 auto;
+    font-size: 13px;
+    color: var(--text-sec);
+}
+
+.chat_history_active .chat_history_title {
+    font-weight: 500;
+    color: var(--text-pri);
+}
+
+.sidebar.collapsed .chat_history_title {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ── Bottom user section ── */
+.sidebar_bottom_section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    overflow: hidden;
+    transition: padding var(--speed) ease;
+    border-top: 1px solid var(--border-soft);
+    padding: 12px;
+}
+
+.sidebar.collapsed .sidebar_bottom_section {
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.sidebar_user_profile {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.user_avatar {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #ffffff;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    font-size: 11px;
+}
+
+.user_info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+    opacity: 1;
+    transition: opacity var(--speed) ease;
+    overflow: hidden;
+}
+
+.sidebar.collapsed .user_info {
+    opacity: 0;
+    width: 0;
+    pointer-events: none;
+}
+
+.user_name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-pri);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user_plan {
+    font-size: 10.5px;
+    color: var(--text-sec);
+    margin-top: 1px;
+}
+
+.mobile_sidebar_toggle {
+    display: none;
+}
+
+.sidebar_backdrop {
+    display: none;
+}
+
+@media (max-width: 860px) {
+    .mobile_sidebar_toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        width: 38px;
+        height: 38px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--bg-surface);
+        color: var(--text-pri);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 80;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .sidebar_backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 15, 20, 0.4);
+        z-index: 60;
+        animation: sidebarBackdropIn var(--speed) ease;
+    }
+
+    .sidebar,
+    .sidebar.collapsed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100dvh;
+        width: min(82vw, 300px);
+        z-index: 70;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
+        transition: transform var(--speed) cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.mobile_open,
+    .sidebar.collapsed.mobile_open {
+        transform: translateX(0);
+    }
+}
+
+@keyframes sidebarBackdropIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Shimmering title text while that chat is generating a response you've
+   navigated away from — a subtle "something is happening here" cue. */
+.chat_history_item.chat_history_streaming .chat_history_title {
+    background: linear-gradient(
+        90deg,
+        var(--text-secondary, #9a9a9a) 0%,
+        var(--text-primary, #f5f5f5) 50%,
+        var(--text-secondary, #9a9a9a) 100%
+        );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: chat_history_shimmer 1.8s linear infinite;
+}
+
+@keyframes chat_history_shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Three pulsing dots, staggered, next to the title. */
+.chat_history_streaming_indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+}
+
+.chat_history_streaming_dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%; /* swap for your brand accent color */
+    display: inline-block;
+    animation: chat_history_pulse 1s ease-in-out infinite;
+    background: var(--accent);
+}
+
+.chat_history_streaming_dot:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.chat_history_streaming_dot:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes chat_history_pulse {
+    0%, 80%, 100% {
+        opacity: 0.35;
+        transform: scale(0.75);
+    }
+
+    40% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chat_history_item.chat_history_streaming .chat_history_title,
+    .chat_history_streaming_dot {
+        animation: none;
+    }
+}
+
+.chat_history_time {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--text-muted, #8a94a6);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.chat_history_active .chat_history_time {
+    color: var(--accent);
+    opacity: 0.8;
+}
+
+@media (min-width: 861px) {
+    .sidebar {
+        transition: width 0.24s cubic-bezier(0.2, 0, 0, 1);
+        will-change: width;
+    }
+
+    /* Text: fade out quickly on collapse; on expand, fade in once there's room. */
+    .sidebar .sidebar_brand,
+    .sidebar .menu_item span,
+    .sidebar .user_info,
+    .sidebar .sidebar_chat_section {
+        transition: opacity 0.16s ease 0.08s, visibility 0s linear 0s;
+    }
+
+    .sidebar.collapsed .sidebar_brand,
+    .sidebar.collapsed .menu_item span,
+    .sidebar.collapsed .user_info,
+    .sidebar.collapsed .sidebar_chat_section {
+        opacity: 0;
+        transition: opacity 0.1s ease, visibility 0s linear 0.24s;
+    }
+
+    /* One column for every icon, open or closed: centered at x=26 in the
+       52px rail. `.sidebar` prefixes beat chat_modern.css, which loads later
+       and used different paddings (that was the 1px open/closed shift).
+         menu icon: 10 (menu) + 7 (item) + 18/2      = 26
+         New chat:  10 + 1 (border) + 6 + 18/2        = 26
+         toggle:    11 (header) + 30/2                = 26
+         avatar:    11 (bottom row) + 30/2            = 26 */
+    .sidebar .sidebar_topsection,
+    .sidebar.collapsed .sidebar_topsection {
+        justify-content: space-between;
+        padding: 16px 11px 10px;
+    }
+
+    /* No padding on the brand itself, so it can shrink to exactly 0 and the
+       toggle lands at x=11; the owl is nudged right to sit on the icon column. */
+    .sidebar .sidebar_brand,
+    .sidebar.collapsed .sidebar_brand {
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
+        padding: 0;
+        transform: none;
+    }
+
+    .sidebar .sidebar_brand .owl-mark {
+        margin-left: 5px;
+    }
+
+    .sidebar .menu {
+        padding: 4px 10px 8px;
+    }
+
+    .sidebar .menu_item,
+    .sidebar.collapsed .menu_item {
+        justify-content: flex-start;
+        padding: 8px 7px;
+        width: calc(var(--sb-w) - 21px);
+        transition: background 0.12s, width 0.24s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .sidebar .menu_item.menu_item--primary {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    /* Hover/active pill: a 32px square centered on the icon column. */
+    .sidebar.collapsed .menu_item {
+        width: 32px;
+    }
+
+    .sidebar.collapsed .menu_item span {
+        width: auto;
+    }
+
+    /* Recents: fixed width so titles don't re-truncate every frame. */
+    .sidebar_chat_section {
+        width: calc(var(--sb-w) - 1px);
+        flex-shrink: 0;
+        flex-grow: 1;
+    }
+
+    .sidebar.collapsed .sidebar_chat_section {
+        visibility: hidden;
+        overflow-y: hidden;
+        pointer-events: none;
+    }
+
+    /* Account row: the 30px avatar (chat_modern.css) at x=11 → centered on 26. */
+    .sidebar .sidebar_bottom_section,
+    .sidebar.collapsed .sidebar_bottom_section {
+        justify-content: flex-start;
+        padding: 10px 11px;
+    }
+
+    /* Beats billing.css's collapsed rule (width:auto + centering), which
+       pushed the avatar off-screen while the row narrowed. */
+    .sidebar .sidebar_bottom_section button.sidebar_user_profile,
+    .sidebar.collapsed .sidebar_bottom_section button.sidebar_user_profile {
+        width: calc(100% + 12px);
+        min-width: 0;
+        flex-shrink: 1;
+        margin: -6px;
+        justify-content: flex-start;
+    }
+
+    .sidebar .user_info,
+    .sidebar.collapsed .user_info {
+        width: auto;
+        min-width: 160px;
+    }
+}
+
+.sidebar_brand .owl-mark {
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+/* "New chat" reads as the primary action */
+.menu_item.menu_item--primary {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-xs);
+    margin-bottom: 6px;
+}
+
+.menu_item.menu_item--primary:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-surface);
+}
+
+.menu_item--primary .menu_icon {
+    color: var(--accent);
+}
+
+.sidebar.collapsed .menu_item.menu_item--primary {
+    border-color: transparent;
+    box-shadow: none;
+    background: transparent;
+}
+
+.chat_history_item:hover .chat_history_title {
+    color: var(--text-pri);
+}
+
+.chat_history_active,
+.chat_history_active:hover {
+    background: var(--bg-active);
+}
+
+.menu_item:hover .menu_icon--whatsapp,
+.chat_history_source {
+    color: #25d366;
+}
+
+.chat_history_source {
+    flex-shrink: 0;
+    font-size: 12px;
+    margin-right: -2px;
+}
+
+.chat_history_item .chat_history_title {
+    flex: 1;
+}
+
+.chat_history_agent {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.chat_history_agent > .agent-mark {
+    width: 18px;
+    height: 18px;
+    vertical-align: 0;
+    filter: none;
+}
+
+.menu_item--active {
+    background: var(--bg-active);
+}
+
+/* Sidebar: profile button + account menu (Usage, Plan & billing, Log out). */
+button.sidebar_user_profile {
+    padding: 6px;
+    margin: -6px;
+    width: calc(100% + 12px);
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
+}
+
+button.sidebar_user_profile:hover, button.sidebar_user_profile.is_open {
+    background: var(--bg-hover);
+}
+
+button.sidebar_user_profile .user_info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.sidebar.collapsed button.sidebar_user_profile {
+    width: auto;
+    margin: 0;
+    justify-content: center;
+}
+
+.account_menu {
+    position: fixed;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-surface);
+    box-shadow: var(--shadow-lg);
+    animation: popIn 0.12s ease-out both;
+}
+
+.account_menu__email {
+    padding: 8px 10px 6px;
+    font-size: 12.5px;
+    color: var(--text-sec);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account_menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    font: inherit;
+    font-size: 14px;
+    color: var(--text-pri);
+    text-align: left;
+    cursor: pointer;
+}
+
+.account_menu button:hover, .account_menu button:focus-visible {
+    background: var(--bg-hover);
+    outline: none;
+}
+
+.account_menu button.is_active {
+    color: var(--accent);
+}
+
+.account_menu__icon {
+    width: 16px;
+    color: var(--text-sec);
+}
+
+.account_menu button.is_active .account_menu__icon {
+    color: var(--accent);
+}
+
+.account_menu__hint {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-sec);
+}
+
+.account_menu__sep {
+    height: 1px;
+    margin: 4px 6px;
+    background: var(--border-soft);
+}
+
+.sidebar .sidebar_bottom_section {
+    margin-top: auto;
+}
+
+/* stays at the bottom when the chat list is hidden (collapsed) */
+
+/* ── Pinned (favourite) chats ── */
+.chat_section_label--pinned {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chat_history_pin {
+    display: none;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin: -4px -4px -4px 0;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    color: var(--text-sec);
+    cursor: pointer;
+}
+
+.chat_history_pin:hover {
+    background: var(--bg-active);
+    color: var(--accent);
+}
+
+/* The pin button takes the time's place while the row is hovered or focused. */
+.chat_history_item:hover .chat_history_pin,
+.chat_history_item:focus-within .chat_history_pin,
+.chat_history_pin:focus-visible {
+    display: inline-flex;
+}
+
+.chat_history_item:hover .chat_history_time,
+.chat_history_item:focus-within .chat_history_time {
+    display: none;
+}
+
+.chat_history_pin:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+.chat_history_delete { margin-left: 0; }
+
+.chat_history_delete:hover:not(:disabled) {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+.chat_history_delete:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Touch screens have no hover: keep pin and delete visible. */
+@media (hover: none) {
+    .chat_history_pin { display: inline-flex; }
+    .chat_history_time { display: none; }
+}
+
+.chat_pin_error {
+    margin: 8px 10px 0;
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: var(--danger-soft);
+    color: var(--danger);
+    font-size: 12px;
+}
+
+/* Touch screens have no hover: keep the pin reachable on every row. */
+@media (hover: none) {
+    .chat_history_pin {
+        display: inline-flex;
+    }
+}
+
+/* ── "More" — less-used pages, expand / collapse ── */
+.menu_item--more {
+    color: var(--text-sec);
+}
+
+.menu_item--more:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.menu_more_chevron {
+    transition: transform 0.2s ease;
+}
+
+.menu_more_chevron.is_open {
+    transform: rotate(180deg);
+}
+
+/* Height animates from 0 to its content (grid rows 0fr → 1fr). */
+.menu_more {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.22s ease, opacity 0.18s ease;
+    opacity: 0;
+    list-style: none;
+}
+
+.menu_more.is_open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+.menu_more > ul {
+    min-height: 0;
+    overflow: hidden;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu_more:not(.is_open) {
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .menu_more,
+    .menu_more_chevron {
+        transition: none;
+    }
+}
+
+/* ── Resizable width (drag the right edge; desktop only) ── */
+.sidebar_resizer {
+    display: none;
+}
+
+@media (min-width: 861px) {
+    .sidebar {
+        position: relative;
+    }
+
+    .sidebar_resizer {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 5;
+        width: 7px;
+        cursor: col-resize;
+        touch-action: none;
+    }
+
+    /* A thin line appears on hover / while dragging / on keyboard focus. */
+    .sidebar_resizer::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: 2px;
+        background: var(--accent);
+        opacity: 0;
+        transition: opacity 0.15s ease 0.1s;
+    }
+
+    .sidebar_resizer:hover::after,
+    .sidebar.is_resizing .sidebar_resizer::after,
+    .sidebar_resizer:focus-visible::after {
+        opacity: 0.55;
+    }
+
+    .sidebar_resizer:focus-visible {
+        outline: none;
+    }
+
+    /* Follow the pointer exactly while dragging. */
+    .sidebar.is_resizing,
+    .sidebar.is_resizing .menu_item {
+        transition: none !important;
+    }
+}
+
+/* While dragging: no text selection, and frames (document previews) can't
+   swallow the pointer. */
+body.is_resizing_sidebar {
+    cursor: col-resize;
+    user-select: none;
+}
+
+body.is_resizing_sidebar iframe {
+    pointer-events: none;
+}
+
+/* ── Chat list: loading skeleton (shimmer), empty/error note, "View all" ── */
+.chat_skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.chat_skeleton_row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 10px;
+    animation: chat_skeleton_in 0.3s ease both;
+}
+
+.chat_skeleton_bar,
+.chat_skeleton_time {
+    display: block;
+    height: 10px;
+    border-radius: 6px;
+    background: linear-gradient(
+        90deg,
+        var(--bg-active) 0%,
+        var(--bg-active) 35%,
+        var(--bg-subtle) 50%,
+        var(--bg-active) 65%,
+        var(--bg-active) 100%
+    );
+    background-size: 300% 100%;
+    animation: chat_shimmer 1.4s ease-in-out infinite;
+}
+
+.chat_skeleton_time {
+    width: 30px;
+    margin-left: auto;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+@keyframes chat_shimmer {
+    from { background-position: 100% 0; }
+    to { background-position: 0 0; }
+}
+
+@keyframes chat_skeleton_in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.chat_list_note {
+    padding: 8px 10px;
+    font-size: 13px;
+    color: var(--text-ter);
+    white-space: nowrap;
+}
+
+.chat_list_link {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.chat_view_all {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 4px;
+    padding: 7px 10px;
+    border: none;
+    border-radius: 8px;
+    background: none;
+    font: inherit;
+    font-size: 13px;
+    color: var(--text-sec);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.12s, color 0.12s;
+}
+
+.chat_view_all:hover {
+    background: var(--bg-hover);
+    color: var(--accent);
+}
+
+.chat_view_all:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.chat_view_all_count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-ter);
+}
+
+.sidebar.collapsed .chat_skeleton,
+.sidebar.collapsed .chat_list_note,
+.sidebar.collapsed .chat_view_all {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chat_skeleton_bar,
+    .chat_skeleton_time,
+    .chat_skeleton_row {
+        animation: none;
+    }
+}
+
+/* Quick clicks on More/Less shouldn't select its text. */
+.menu_item--more {
+    user-select: none;
+}
+
+/* ── Polish: clearer current page, grouped "More", divider above Recents ── */
+.menu_item--active {
+    font-weight: 600;
+}
+
+.menu_item--active .menu_icon {
+    color: var(--accent);
+}
+
+/* A hairline between the pages and the chat list. */
+.sidebar .menu::after {
+    content: "";
+    display: block;
+    height: 1px;
+    margin: 8px 7px 0;
+    background: var(--border-soft);
+}
+
+/* "Build" / "Connect" inside More; folds away with the rail. */
+.menu_group_label {
+    padding: 10px 7px 4px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-ter);
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity var(--speed) ease;
+}
+
+.sidebar.collapsed .menu_group_label {
+    opacity: 0;
+    height: 0;
+    padding: 0;
+}
+
+/* Account menu: grouped, slightly tighter rows. */
+.account_menu button {
+    padding: 7px 10px;
+    font-size: 13.5px;
+}
+
+.account_menu__label {
+    padding: 6px 10px 2px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-ter);
+}

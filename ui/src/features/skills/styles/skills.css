@@ -1,0 +1,176 @@
+/* ── Skills page ── */
+.sk_head_actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sk_empty {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    padding: 20px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    color: var(--text-sec);
+}
+
+.sk_empty strong {
+    color: var(--text-pri);
+}
+
+.sk_templates {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.sk_list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.sk_item {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-surface);
+}
+
+.sk_item.is_off {
+    opacity: 0.6;
+}
+
+.sk_item__main {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+}
+
+.sk_item__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    background: none;
+    padding: 0;
+}
+
+.sk_item__desc {
+    color: var(--text-pri);
+    overflow-wrap: anywhere;
+}
+
+.sk_form {
+    display: grid;
+    gap: 12px;
+}
+
+.sk_content {
+    resize: vertical;
+    min-height: 260px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* ── agent editor: skills ── */
+.sk_modes {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 6px 0 10px;
+}
+
+.sk_mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.sk_mode.is_on {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 6%, var(--bg-surface));
+}
+
+.sk_mode input {
+    accent-color: var(--accent);
+}
+
+.sk_pick {
+    display: grid;
+    gap: 6px;
+}
+
+.sk_pick__item {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    cursor: pointer;
+}
+
+.sk_pick__item input {
+    accent-color: var(--accent);
+}
+
+@media (max-width: 860px) {
+    .sk_item {
+        grid-template-columns: 1fr auto;
+    }
+}
+
+/* ── skill folders: bundled files ── */
+.sk_hint { margin: -4px 0 14px; }
+.sk_files { display: grid; gap: 6px; }
+.sk_files ul { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+
+.sk_files li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    color: var(--text-sec);
+}
+
+.sk_file_link {
+    overflow: hidden;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--text-pri);
+    font-size: 13px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.sk_file_link:hover { color: var(--accent); text-decoration: underline; }
+
+.sk_file_view {
+    max-height: 60vh;
+    margin: 0;
+    overflow: auto;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--bg-code);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}

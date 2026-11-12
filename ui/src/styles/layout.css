@@ -1,0 +1,32 @@
+/* ═══════════════════════════════════════════════════════════════════
+   App layout
+   The page frame: sidebar + content columns (HomeChat, AppShell).
+   ═══════════════════════════════════════════════════════════════════ */
+
+.chat_main {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    font-family: var(--font);
+    color: var(--text-pri);
+    background: var(--bg-app);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv11", "ss01";
+}
+
+.chat_sections {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.ag_plane {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    background: var(--bg-surface);
+    font-family: var(--font);
+    color: var(--text-pri);
+}

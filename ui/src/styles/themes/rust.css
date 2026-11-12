@@ -1,0 +1,125 @@
+/* ─────────────────────────────────────────────────────────────
+   Rust theme — warm off-white surfaces with a burnt-orange accent.
+   Applies when <html data-theme="rust"> (shared/lib/theme.ts). The
+   other rules use :where(), so they win exactly as if the file were global.
+
+   Contrast (WCAG): white on the accent #b7410e is 5.8:1; the accent as
+   text on the page is 5.4:1; primary text ≥ 14:1, secondary ≥ 6:1.
+   ───────────────────────────────────────────────────────────── */
+:root[data-theme="rust"] {
+    --rust: #b7410e;
+    --rust-hover: #9a370c;
+    --rust-soft: #fbece4;
+
+    /* the agent icon */
+    --bot-1: #f0936a;
+    --bot-2: #d0602e;
+    --bot-3: #9a370c;
+    --bot-face: #ffffff;
+
+    --bg-app: #faf6f3;
+    --bg-surface: #ffffff;
+    --bg-input: #ffffff;
+    --bg-hover: #f5ece6;
+    --bg-active: #efe1d8;
+    --bg-subtle: #f8f1ec;
+    --bg-code: #f8f1ec;
+    --bg-code-hdr: #f1e6de;
+
+    --border: #ecdfd6;
+    --border-soft: #f3e9e2;
+    --border-strong: #dfcabc;
+
+    --text-pri: #2a1d17;
+    --text-sec: #6e5a4f;
+    --text-ter: #9c8679;
+
+    --accent: #b7410e;
+    --accent-hover: #9a370c;
+    --accent-soft: #fbece4;
+    --accent-ring: rgba(183, 65, 14, 0.22);
+    --accent-ink: #ffffff;
+    --accent-secondary: #f0d5c6;
+    --accent-border: #efc6b1;
+
+    --tool-purple-bg: #fbece4;
+    --tool-purple-fg: #b7410e;
+
+    --shadow-xs: 0 1px 2px rgba(42, 29, 23, 0.05);
+    --shadow-sm: 0 1px 3px rgba(42, 29, 23, 0.07), 0 1px 2px rgba(42, 29, 23, 0.04);
+    --shadow-md: 0 8px 24px -6px rgba(42, 29, 23, 0.13), 0 2px 6px rgba(42, 29, 23, 0.05);
+    --shadow-lg: 0 24px 60px -12px rgba(42, 29, 23, 0.26);
+
+    /* storage.css (knowledge base) */
+    --bg: #faf6f3;
+    --surface: #ffffff;
+    --text-primary: #2a1d17;
+    --text-secondary: #6e5a4f;
+    --text-tertiary: #9c8679;
+
+    color-scheme: light;
+}
+
+:where(:root[data-theme="rust"]) body {
+    background: var(--bg-app);
+    color: var(--text-pri);
+}
+
+/* ── Sidebar: white, with a rust highlight for the current page ── */
+:where(:root[data-theme="rust"]) .sidebar {
+    background: #ffffff;
+    border-right: 1px solid var(--border);
+}
+
+:where(:root[data-theme="rust"]) .menu_item.menu_item--active,
+:where(:root[data-theme="rust"]) .menu_item--active {
+    background: var(--rust-soft);
+    color: var(--rust);
+}
+
+:where(:root[data-theme="rust"]) .menu_item--active .menu_icon {
+    color: var(--rust);
+}
+
+:where(:root[data-theme="rust"]) .ag_btn--primary,
+:where(:root[data-theme="rust"]) .send_btn,
+:where(:root[data-theme="rust"]) .btn--primary,
+:where(:root[data-theme="rust"]) .upload-btn {
+    box-shadow: 0 1px 3px rgba(183, 65, 14, 0.25);
+}
+
+:where(:root[data-theme="rust"]) .ag_tab.is_active {
+    color: var(--rust);
+    border-bottom-color: var(--rust);
+}
+
+:where(:root[data-theme="rust"]) .ag_segmented button.is_active {
+    color: var(--rust);
+}
+
+/* ── Spots with the old indigo baked in ── */
+:where(:root[data-theme="rust"]) .user_avatar {
+    background: linear-gradient(135deg, #d0602e, #9a370c);
+}
+
+:where(:root[data-theme="rust"]) .welcome__logo {
+    background: linear-gradient(145deg, #fbece4, #fdf5f0);
+    box-shadow: inset 0 0 0 1px rgba(183, 65, 14, 0.2);
+}
+
+:where(:root[data-theme="rust"]) .mode_chip button:hover {
+    background: rgba(183, 65, 14, 0.12);
+}
+
+:where(:root[data-theme="rust"]) .source_chip:hover:not(:disabled) {
+    border-color: rgba(183, 65, 14, 0.4);
+}
+
+:where(:root[data-theme="rust"]) .ai-icon {
+    background: linear-gradient(135deg, #d0602e 0%, #9a370c 100%);
+    box-shadow: 0 10px 24px -6px rgba(154, 55, 12, 0.45);
+}
+
+:where(:root[data-theme="rust"]) ::selection {
+    background: rgba(183, 65, 14, 0.2);
+}

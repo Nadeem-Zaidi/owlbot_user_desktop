@@ -1,0 +1,11 @@
+order_id,product,category,region,quantity,unit_price,order_date
+1001,Wireless Mouse,Electronics,North,12,19.99,2025-01-05
+1002,Office Chair,Furniture,South,5,89.50,2025-01-08
+1003,Notebook Set,Stationery,East,40,4.25,2025-01-10
+1004,Bluetooth Speaker,Electronics,West,8,34.99,2025-01-12
+1005,Standing Desk,Furniture,North,3,249.00,2025-01-15
+1006,Ballpoint Pens,Stationery,South,100,0.75,2025-01-18
+1007,USB-C Hub,Electronics,East,15,22.50,2025-01-20
+1008,Bookshelf,Furniture,West,4,120.00,2025-01-22
+1009,Sticky Notes,Stationery,North,60,2.10,2025-01-25
+1010,Webcam HD,Electronics,South,10,45.00,2025-01-28

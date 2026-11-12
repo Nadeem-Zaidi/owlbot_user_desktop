@@ -1,0 +1,437 @@
+/* ── generated file card (chat) ── */
+.gf_card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 440px;
+    margin: 8px 0 4px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-surface);
+}
+
+.gf_card__icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    color: #fff;
+    background: #2b579a;
+}
+
+.gf_card--excel .gf_card__icon {
+    background: #217346;
+}
+
+.gf_card__open {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+}
+
+.gf_card__open:disabled {
+    cursor: default;
+}
+
+.gf_card:has(.gf_card__open:not(:disabled)):hover,
+.gf_card.is_open {
+    border-color: var(--accent);
+}
+
+.gf_card.is_open {
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+.gf_card__open:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 8px;
+}
+
+.gf_card__main {
+    display: grid;
+    min-width: 0;
+    flex: 1;
+}
+
+.gf_card__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-pri);
+}
+
+.gf_card__meta {
+    font-size: 12px;
+    color: var(--text-sec);
+}
+
+.gf_card__error {
+    color: var(--danger, #dc2626);
+}
+
+.gf_card__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-surface);
+    font: inherit;
+    font-size: 13px;
+    color: var(--text-pri);
+    cursor: pointer;
+}
+
+.gf_card__btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.gf_card.is_pending {
+    opacity: 0.85;
+}
+
+.gf_card__spin {
+    color: var(--text-ter);
+}
+
+/* ── viewer (side panel; shares .art_panel with artifacts) ── */
+.dv_download {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    font: 500 13px var(--font);
+    color: var(--accent-ink);
+    cursor: pointer;
+    transition: background var(--speed);
+}
+
+.dv_download:hover:not(:disabled) {
+    background: var(--accent-hover);
+}
+
+.dv_word {
+    background: #eef0f3;
+}
+
+.dv_grid_wrap {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    background: #fff;
+}
+
+.dv_grid {
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+    width: max-content;
+    font: 13px/1.35 Calibri, Carlito, "Segoe UI", Arial, sans-serif;
+    color: #111827;
+}
+
+.dv_grid td,
+.dv_grid th {
+    padding: 3px 6px;
+    border-right: 1px solid #e3e5e8;
+    border-bottom: 1px solid #e3e5e8;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: left;
+    vertical-align: top;
+    font-weight: 400;
+}
+
+.dv_grid td.is_wrap {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.dv_grid td.is_num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.dv_grid td.is_bold {
+    font-weight: 700;
+}
+
+.dv_grid td.is_italic {
+    font-style: italic;
+}
+
+.dv_grid td.is_total {
+    border-top: 3px double #6b7280;
+}
+
+.dv_grid td.is_formula {
+    color: #6b7280;
+    font-style: italic;
+}
+
+.dv_grid thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    height: 22px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 12px;
+    text-align: center;
+}
+
+.dv_grid .dv_rowhead {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 12px;
+    text-align: center;
+}
+
+.dv_grid .dv_corner {
+    left: 0;
+    z-index: 4;
+}
+
+/* Frozen rows (the header) stay under the column letters while scrolling. */
+.dv_grid tr.is_frozen td,
+.dv_grid tr.is_frozen th {
+    position: sticky;
+    top: 22px;
+    z-index: 2;
+}
+
+.dv_grid tr.is_frozen td {
+    background: #fff;
+}
+
+.dv_grid tr.is_frozen .dv_rowhead {
+    z-index: 3;
+}
+
+.dv_tabs {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 8px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-subtle);
+    overflow-x: auto;
+    flex-shrink: 0;
+}
+
+.dv_tabs button {
+    padding: 7px 14px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    font: 13px var(--font);
+    color: var(--text-sec);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.dv_tabs button.is_active {
+    background: var(--bg-surface);
+    border-bottom-color: #217346;
+    color: #217346;
+    font-weight: 600;
+}
+
+.dv_note {
+    margin-left: auto;
+    padding: 0 6px;
+    font-size: 12px;
+    color: var(--text-ter);
+    white-space: nowrap;
+}
+
+/* ── document style page ── */
+.ds_layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 18px;
+    align-items: start;
+}
+
+.ds_form {
+    display: grid;
+    gap: 14px;
+}
+
+.ds_row {
+    display: grid;
+    grid-template-columns: 1fr 140px;
+    gap: 12px;
+}
+
+.ds_logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ds_logo img {
+    height: 40px;
+    max-width: 140px;
+    object-fit: contain;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px;
+    background: #fff;
+}
+
+.ds_colors {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.ds_swatch {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.ds_swatch.is_on {
+    border-color: var(--bg-surface);
+    box-shadow: 0 0 0 2px var(--text-pri);
+}
+
+.ds_picker {
+    width: 34px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.ds_actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ds_preview {
+    display: grid;
+    gap: 12px;
+    position: sticky;
+    top: 12px;
+}
+
+.ds_page {
+    padding: 18px 20px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    color: #111827;
+    font-size: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.ds_page__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.ds_page__header img {
+    height: 22px;
+}
+
+.ds_page h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.ds_page h3 {
+    margin: 8px 0 4px;
+    font-size: 13px;
+}
+
+.ds_page p {
+    margin: 0 0 8px;
+    color: #374151;
+}
+
+.ds_page table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+.ds_page th,
+.ds_page td {
+    border: 1px solid #d1d5db;
+    padding: 4px 6px;
+    text-align: left;
+}
+
+.ds_page__footer {
+    margin-top: 6px;
+    text-align: center;
+    font-size: 10px;
+    color: #6b7280;
+}
+
+.ds_sheet {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 12px;
+    background: #fff;
+    color: #111827;
+}
+
+.ds_sheet__row {
+    display: grid;
+    grid-template-columns: 70px 1fr 90px;
+}
+
+.ds_sheet__row span {
+    padding: 5px 8px;
+    border-right: 1px solid #e5e7eb;
+}
+
+.ds_sheet__head {
+    color: #fff;
+    font-weight: 600;
+}
+
+@media (max-width: 960px) {
+    .ds_layout {
+        grid-template-columns: 1fr;
+    }
+
+    .ds_preview {
+        position: static;
+    }
+}
