@@ -3,8 +3,8 @@ import { Router } from "express";
 // Answers for things the web app asks about that have no meaning on one
 // computer, so its screens stay quiet instead of showing errors: there are no
 // plans or payments, no team workspaces, no app owner, no WhatsApp bot and no
-// provider-hosted agents. The knowledge base and skills answer empty until
-// their desktop versions exist.
+// provider-hosted agents. The shared knowledge base answers empty (agents
+// get their own files instead).
 export function createShellRouter(): Router {
     const r = Router();
 
@@ -16,7 +16,6 @@ export function createShellRouter(): Router {
     r.get("/api/workspaces", (_req, res) => res.json({ workspaces: [] }));
     r.get("/api/whatsapp/status", (_req, res) => res.json({ enabled: false, botConnected: false, link: null }));
     r.get("/api/native-agents", (_req, res) => res.json({ activeProvider: null, canWriteCode: false, providers: [], agents: [] }));
-    r.get("/api/skills", (_req, res) => res.json({ skills: [] }));
     r.get("/documents", (_req, res) => res.json({ documents: [] }));
 
     return r;

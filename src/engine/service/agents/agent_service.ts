@@ -26,6 +26,12 @@ import { decryptSecret, encryptSecret, SECRET_MASK } from "./secrets";
 import { assertPublicUrl } from "./url_guard";
 import { collectReply } from "../../core/runtime/collect";
 import { AsyncLocalStorage } from "node:async_hooks";
+import { AgentFileRepository } from "../../repository/agent_file_repository";
+import { SkillRepository } from "../../repository/skill_repository";
+import { chunkText, extractText, MAX_UPLOAD_BYTES } from "../files/extract_text";
+import { agentFileTools, FILE_TOOL_NAMES, filesPrompt, resolveSkills, SKILL_TOOL_NAMES, skillsPrompt, skillTools } from "./knowledge_tools";
+
+const SHARED_KB_TOOLS = new Set(["search_knowledge_base", "read_document", "list_documents"]);
 
 // Agents asking agents: the chain of agents working on the current request
 // (outermost first), so a helper can't send work back up (A → B → A) and
@@ -62,6 +68,9 @@ type Deps = {
     workspaces?: WorkspaceService;
     // run_local_command (desktop app). Optional: without it the checkbox does nothing.
     localCommandTool?: ToolDefinition;
+    // Desktop: files given to each agent, and the user's skill library.
+    files?: AgentFileRepository;
+    skills?: SkillRepository;
     // One plain model turn in a throwaway chat (agent drafts).
     ask?: (userId: string, sessionId: string, prompt: string, signal: AbortSignal) => Promise<{ text: string; error: string | null }>;
 };
@@ -140,17 +149,19 @@ export class AgentService {
     async get(userId: string, id: string) {
         const { my_role, ...agent } = await this.requireAgent(userId, id);
         const can_edit = canEditAgent({ ...agent, my_role }, userId);
-        const [functions, servers, schedules, codeFunctions] = await Promise.all([
+        const [functions, servers, schedules, codeFunctions, files] = await Promise.all([
             this.deps.repo.listFunctions(id),
             this.deps.repo.listMcpServers(id),
             this.deps.repo.listSchedules(id),
             this.deps.repo.listCodeFunctions(id),
+            this.deps.files?.list(id) ?? Promise.resolve([]),
         ]);
         return {
             ...agent,
             can_edit,
             functions: functions.map(functionDto),
             codeFunctions: codeFunctions.map(codeFunctionDto),
+            files,
             mcpServers: servers.map(mcpDto),
             schedules: schedules.map(scheduleDto),
         };
@@ -439,16 +450,51 @@ ${text}
 
     // Tool names must be unique across built-ins, HTTP functions and code functions.
     private async assertToolNameFree(agentId: string, name: string, ignoreId?: string) {
-        if (BUILTIN_TOOL_IDS.has(name)) throw new AgentError(`"${name}" is reserved for a built-in tool`);
+        if (BUILTIN_TOOL_IDS.has(name) || ([...FILE_TOOL_NAMES, ...SKILL_TOOL_NAMES] as string[]).includes(name)) throw new AgentError(`"${name}" is reserved for a built-in tool`);
         const [http, code] = await Promise.all([this.deps.repo.listFunctions(agentId), this.deps.repo.listCodeFunctions(agentId)]);
         if ([...http, ...code].some((f) => f.name === name && f.id !== ignoreId)) {
             throw new AgentError(`This agent already has a function named "${name}"`);
         }
     }
 
+    // ── files given to the agent (desktop) ──
+    private fileRepo(): AgentFileRepository {
+        if (!this.deps.files) throw new AgentError("Agent files aren't available here", 404);
+        return this.deps.files;
+    }
+
+    async listFiles(userId: string, agentId: string) {
+        await this.requireAgent(userId, agentId);
+        return this.fileRepo().list(agentId);
+    }
+
+    // body: { name, data (base64) }. The text is extracted now and the file itself isn't kept.
+    async uploadFile(userId: string, agentId: string, body: any) {
+        await this.requireEditable(userId, agentId);
+        const name = String(body?.name ?? "").replace(/[\\/]/g, "_").trim().slice(0, 200);
+        if (!name) throw new AgentError("The file needs a name");
+        if (typeof body?.data !== "string" || !body.data) throw new AgentError(`"${name}" is empty`);
+        const data = Buffer.from(body.data, "base64");
+        if (data.length > MAX_UPLOAD_BYTES) throw new AgentError(`"${name}" is larger than ${MAX_UPLOAD_BYTES / 1024 / 1024} MB`);
+        const { kind, text, truncated } = await extractText(name, data);
+        return this.fileRepo().save(agentId, { name, kind, bytes: data.length, content: text, truncated }, chunkText(text));
+    }
+
+    async readFile(userId: string, agentId: string, fileId: string) {
+        await this.requireAgent(userId, agentId);
+        const f = await this.fileRepo().get(agentId, fileId);
+        if (!f) throw new AgentError("File not found", 404);
+        return f;
+    }
+
+    async deleteFile(userId: string, agentId: string, fileId: string) {
+        await this.requireEditable(userId, agentId);
+        if (!(await this.fileRepo().delete(agentId, fileId))) throw new AgentError("File not found", 404);
+    }
+
     // ── code functions (owner only) ──
     private requireOwner(email?: string) {
-        if (!codeFunctionsEnabled()) throw new AgentError("Code functions are turned off. Add your email to OWNER_EMAILS in the backend .env and restart.", 403);
+        if (!codeFunctionsEnabled()) throw new AgentError("Code functions are turned off.", 403);
         if (!isOwner(email)) throw new AgentError("Only the app owner can write or run code functions.", 403);
     }
 
@@ -694,9 +740,21 @@ ${text}
         const helpers = await this.helperTools(agent);
         const local = access.localCommands && this.deps.localCommandTool && agent.builtin_tools.includes(LOCAL_COMMAND_TOOL)
             ? access.localCommands : null;
-        const tools = buildAgentToolSet(agent, functions, servers, {
+        // The agent's own files and the skills it may load (desktop).
+        const [agentFiles, skills] = await Promise.all([
+            this.deps.files?.list(agent.id) ?? Promise.resolve([]),
+            this.deps.skills ? resolveSkills(this.deps.skills, agent.user_id, { mode: agent.skill_mode ?? "all", ids: agent.skill_ids ?? [] }) : Promise.resolve([]),
+        ]);
+        const knowledgeTools = [
+            ...(agentFiles.length ? agentFileTools(this.deps.files!, agent.id) : []),
+            ...(this.deps.skills ? skillTools(this.deps.skills, agent.user_id, skills) : []),
+        ];
+        // With per-agent files (desktop) the shared knowledge base is empty,
+        // so its tools would only send the model looking in the wrong place.
+        const builtinTools = this.deps.files ? agent.builtin_tools.filter((t) => !SHARED_KB_TOOLS.has(t)) : agent.builtin_tools;
+        const tools = buildAgentToolSet({ ...agent, builtin_tools: builtinTools }, functions, servers, {
             vectorDb: this.deps.vectorDb, embed: this.deps.embed, kb: this.deps.kb,
-            alwaysTools: [...(this.deps.alwaysTools ?? []), ...(local ? [this.deps.localCommandTool!] : [])],
+            alwaysTools: [...(this.deps.alwaysTools ?? []), ...knowledgeTools, ...(local ? [this.deps.localCommandTool!] : [])],
         }, this.mcpPool, codeFunctions, helpers);
         const docNames = agent.document_keys.map((k) => k.split("/").pop());
 
@@ -708,6 +766,8 @@ ${text}
             `You are "${agent.name}", a custom assistant in Owl Bot.`,
             agent.instructions,
             ...files,
+            filesPrompt(agentFiles),
+            skillsPrompt(skills),
             agent.document_keys.length ? `You can only use these documents from the knowledge base: ${docNames.join(", ")}.` : "",
             `Today is ${new Date().toUTCString()}.`,
             helpers.length > 1 ? "When a task needs several of your other agents and their parts don't depend on each other, call their ask_ tools together in one turn — they work at the same time." : "",

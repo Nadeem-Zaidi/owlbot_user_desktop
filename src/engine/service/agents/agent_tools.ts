@@ -173,7 +173,7 @@ export function httpFunctionTool(fn: AgentFunctionRow): ToolDefinition {
     };
 }
 
-// ── Code functions (owner-written Python, run by the Python gRPC service) ──
+// ── Code functions (the user's own Python, run on this computer) ──────────
 export function decryptCodeSecrets(fn: Pick<AgentCodeFunctionRow, "secrets">): Record<string, string> {
     return Object.fromEntries(fn.secrets.map((s) => [s.key, decryptSecret(s.value)]));
 }
@@ -200,7 +200,15 @@ export function mcpToolName(serverName: string, toolName: string): string {
 }
 
 function mcpTools(server: AgentMcpServerRow, pool: McpPool): ToolDefinition[] {
-    const token = server.auth_token ? decryptSecret(server.auth_token) : null;
+    // An unreadable token mustn't break the whole chat: the agent still
+    // answers, and only this server's tools report the problem.
+    let token: string | null = null;
+    let tokenError: Error | null = null;
+    try {
+        token = server.auth_token ? decryptSecret(server.auth_token) : null;
+    } catch (err) {
+        tokenError = err instanceof Error ? err : new Error(String(err));
+    }
     const target = { url: server.url, token };
     const atlassian = isAtlassian(server.url);
     return server.tools.filter((t) => t.enabled).map((t) => {
@@ -219,6 +227,7 @@ function mcpTools(server: AgentMcpServerRow, pool: McpPool): ToolDefinition[] {
             description: `[${server.name}] ${t.description ?? t.name}`.slice(0, 1024),
             parameters: { ...schema, type: "object", properties, required } as ToolDefinition["parameters"],
             execute: async (args: Record<string, any>) => {
+                if (tokenError) throw new Error(`${tokenError.message} (MCP server "${server.name}")`);
                 if (!autoCloudId) return pool.callTool(server.id, target, t.name, args);
                 const given = normalizeCloudId(args.cloudId);
                 args = { ...args, cloudId: given ?? await pool.atlassianCloudId(server.id, target) };

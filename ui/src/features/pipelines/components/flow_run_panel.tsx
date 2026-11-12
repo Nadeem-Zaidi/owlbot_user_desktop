@@ -5,6 +5,7 @@ import { AgentAvatar } from "@/shared/ui/agent_avatar";
 import type { FlowTraceEntry, PipelineRun } from "@/features/pipelines/api/pipelines_api";
 import { branchClass, branchLabel } from "@/features/pipelines/lib/flow_graph";
 import { MarkdownOutput } from "@/features/chat/components/markdown_output";
+import { ExpandOutputButton } from "@/shared/ui/output_viewer";
 
 const STATUS_TEXT: Record<PipelineRun["status"], string> = {
   running: "Running", waiting: "Waiting for approval", succeeded: "Succeeded", failed: "Failed", rejected: "Rejected", cancelled: "Cancelled",
@@ -137,9 +138,12 @@ export const FlowRunPanel = ({ canRun, blockedReason, starting, onRun, save, act
             <div className="pl_final">
               <div className="ag_section__head">
                 <span className="ag_field__label">Final output</span>
-                <Button variant="ghost" onClick={async () => { await navigator.clipboard.writeText(active.output ?? ""); setCopied(true); setTimeout(() => setCopied(false), 1500); }}>
-                  {copied ? <><Check size={14} /> Copied</> : <><Copy size={14} /> Copy</>}
-                </Button>
+                <span className="pl_final__actions">
+                  <ExpandOutputButton title="Final output" text={active.output} />
+                  <Button variant="ghost" onClick={async () => { await navigator.clipboard.writeText(active.output ?? ""); setCopied(true); setTimeout(() => setCopied(false), 1500); }}>
+                    {copied ? <><Check size={14} /> Copied</> : <><Copy size={14} /> Copy</>}
+                  </Button>
+                </span>
               </div>
               <MarkdownOutput text={active.output} className="pl_final__text" />
             </div>

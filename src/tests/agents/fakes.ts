@@ -88,7 +88,7 @@ export class FakeSessions {
 }
 
 // An AgentService wired to the fakes. `llm` answers for every agent.
-export function makeService(llm: FakeLLM, opts: { localCommandTool?: boolean } = {}) {
+export function makeService(llm: FakeLLM, opts: { localCommandTool?: boolean; extra?: Record<string, unknown> } = {}) {
     const repo = new FakeAgentRepo();
     const sessions = new FakeSessions();
     const stub: any = new Proxy({}, { get: () => () => undefined });
@@ -98,6 +98,7 @@ export function makeService(llm: FakeLLM, opts: { localCommandTool?: boolean } =
         providers: new Map([["claude" as any, llm]]),
         defaultProvider: "claude" as any,
         kb: stub, vectorDb: stub, embed: stub,
+        ...(opts.extra ?? {}),
         ...(opts.localCommandTool ? {
             localCommandTool: { name: "run_local_command", description: "", parameters: { type: "object", properties: {}, required: [] }, execute: async () => "ran" },
         } : {}),

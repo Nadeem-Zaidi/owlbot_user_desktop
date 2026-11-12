@@ -304,3 +304,9 @@
         position: static;
     }
 }
+
+.pl_final__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

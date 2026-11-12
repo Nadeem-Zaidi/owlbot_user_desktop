@@ -19,6 +19,8 @@ import { AgentAvatar } from "@/shared/ui/agent_avatar";
 import { Button, ConfirmDialog, ErrorNote, Toggle } from "@/shared/ui/ui";
 import { InstructionFilesEditor, InstructionsImport, LoadDescriptionButton } from "@/features/agents/components/instruction_files";
 import { AgentSkillsSection } from "@/features/skills/components/agent_skills";
+import { AgentFilesSection } from "@/features/agents/components/agent_files";
+import { SHOW_KNOWLEDGE_BASE } from "@/shared/lib/features";
 import { HelperAgentsSection } from "@/features/agents/components/helper_agents_section";
 import { MarkdownOutput } from "@/features/chat/components/markdown_output";
 
@@ -26,7 +28,10 @@ type Tab = "configure" | "tools" | "schedules" | "activity";
 
 const EMOJIS = ["🤖", "🧠", "🦉", "📚", "🧾", "🎓", "💼", "📰", "🛠️", "🔍", "📈", "💡", "✍️", "🧪", "🗂️", "📅", "🌐", "🛡️", "💬", "🎯", "⚙️", "📦", "🧭", "🚀"];
 
-const EMPTY: AgentInput = { name: "", icon: "🤖", description: "", instructions: "", provider: null, model: null, builtin_tools: ["search_knowledge_base"], document_keys: [], starters: [], instruction_files: [], skill_mode: "all", skill_ids: [], helper_agent_ids: [], limits: {} };
+// The shared knowledge base's tools; without it, agents use their own Files.
+const KB_TOOLS = new Set(["search_knowledge_base", "read_document", "list_documents"]);
+
+const EMPTY: AgentInput = { name: "", icon: "🤖", description: "", instructions: "", provider: null, model: null, builtin_tools: SHOW_KNOWLEDGE_BASE ? ["search_knowledge_base"] : [], document_keys: [], starters: [], instruction_files: [], skill_mode: "all", skill_ids: [], helper_agent_ids: [], limits: {} };
 
 const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—");
 const relative = (iso: string | null) => {
@@ -248,7 +253,7 @@ const ConfigureTab = ({ isNew, agentId, form, set, catalog, documents, describe,
   const toolOn = (id: string) => form.builtin_tools.includes(id);
   const canLocal = !!catalog.localCommands?.canUse && !team;
   // Owners see the desktop-only tool; others only if it's already on (so they can turn it off).
-  const builtins = catalog.builtinTools.filter((t) => !t.desktopOnly || canLocal || toolOn(t.id));
+  const builtins = catalog.builtinTools.filter((t) => (!t.desktopOnly || canLocal || toolOn(t.id)) && (SHOW_KNOWLEDGE_BASE || !KB_TOOLS.has(t.id)));
   const limits = form.limits ?? {};
   const setLimit = (k: keyof AgentLimits, v: string) => {
     const n = v.trim() === "" ? undefined : Number(v);
@@ -356,6 +361,7 @@ const ConfigureTab = ({ isNew, agentId, form, set, catalog, documents, describe,
           </select>
         </section>
 
+        {!SHOW_KNOWLEDGE_BASE ? <AgentFilesSection agentId={agentId} /> : (
         <section className="ag_section">
           <h2 className="ag_section__title">Knowledge</h2>
           <div className="ag_segmented" role="radiogroup">
@@ -381,6 +387,7 @@ const ConfigureTab = ({ isNew, agentId, form, set, catalog, documents, describe,
           )}
           {!documents.length && <p className="ag_muted ag_small">Your knowledge base is empty — upload documents from “Knowledge base” in the sidebar.</p>}
         </section>
+        )}
 
         <AgentSkillsSection
           mode={form.skill_mode ?? "all"}
@@ -577,14 +584,13 @@ const ToolsTab = ({ detail, setDetail, catalog }: { detail: AgentDetail; setDeta
         <div className="ag_section__head">
           <div>
             <h2 className="ag_section__title">Code functions <span className="ag_chip">Python</span></h2>
-            <p className="ag_muted ag_small">Write your own Python the agent can run — crunch large data, call several APIs, do maths. Runs in your Python service.</p>
+            <p className="ag_muted ag_small">Write your own Python the agent can run — crunch large data, call several APIs, do maths. Runs with the Python installed on this computer.</p>
           </div>
           {code?.enabled && code.canWrite && <Button variant="primary" onClick={() => setCodeDialog({ open: true })}><Code2 size={15} /> Write function</Button>}
         </div>
         {!code?.enabled ? (
           <div className="ag_note">
-            <strong>Turned off.</strong> Code functions run Python on your server, so they're for the app owner only. To turn them on, add
-            <code>OWNER_EMAILS={code?.email ?? "you@example.com"}</code> to the backend <code>.env</code> and restart it.
+            <strong>Turned off.</strong> Code functions aren't available right now.
           </div>
         ) : !code.canWrite ? (
           <div className="ag_note">Only the app owner can write or change code functions{codeFunctions.length ? " — the ones below still run." : "."}</div>

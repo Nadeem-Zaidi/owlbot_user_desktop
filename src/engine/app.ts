@@ -10,6 +10,11 @@ import { LOCAL_USER_ID, LocalUser, localAuth } from "./http/local_user";
 import { createShellRouter } from "./http/shell_routes";
 import { ClaudeCodeProvider } from "./llms/claude_code_provider";
 import { AgentRepository } from "./repository/agent_repository";
+import { AgentFileRepository } from "./repository/agent_file_repository";
+import { SkillRepository } from "./repository/skill_repository";
+import { createSkillRouter } from "./routes/skill_routes";
+import { SkillService } from "./service/skills/skill_service";
+import { useSecretsKeyDir } from "./service/agents/secrets";
 import { MessageRepository } from "./repository/message_repository";
 import { PipelineRepository } from "./repository/pipeline_repository";
 import { SessionRepository } from "./repository/sessiopn_repository";
@@ -44,6 +49,8 @@ export type Engine = { port: number; url: string; close(): Promise<void> };
 // this process, listening on this computer only.
 export async function startEngine(opts: EngineOptions): Promise<Engine> {
     mkdirSync(opts.dataDir, { recursive: true });
+    // Saved secrets' key lives with the database, not in the start folder.
+    useSecretsKeyDir(opts.dataDir);
     // Agents' HTTP functions and MCP servers may reach the company network
     // (an internal Maximo or Jira is the point here). On the server edition
     // private addresses are blocked; IT can do the same with "false".
@@ -63,7 +70,10 @@ export async function startEngine(opts: EngineOptions): Promise<Engine> {
     };
 
     const agentRepo = new AgentRepository(db);
+    const skillRepo = new SkillRepository(db);
     const agents = new AgentService({
+        files: new AgentFileRepository(db),
+        skills: skillRepo,
         repo: agentRepo,
         messageService: messages,
         providers: new Map([["claude", llm]]),
@@ -86,12 +96,14 @@ export async function startEngine(opts: EngineOptions): Promise<Engine> {
     app.disable("x-powered-by");
     // The UI is not secret; the data behind these paths is.
     const DATA_PATHS = ["/api", "/sessions", "/documents", "/document_content", "/list_files", "/upload", "/delete", "/index_files"];
-    app.use(DATA_PATHS, localAuth(opts.token, user), express.json({ limit: "10mb" }));
+    // 40 MB: files for agents arrive as base64 (25 MB files).
+    app.use(DATA_PATHS, localAuth(opts.token, user), express.json({ limit: "40mb" }));
     const agentRoutes = new AgentRoutes(agents);
     agentRoutes.setScheduler(scheduler);
     app.use("/api/agents", agentRoutes.getRouter());
     app.use("/api/pipelines", new PipelineRoutes(pipelines).getRouter());
     app.use("/api/studio", createStudioRouter(studio));
+    app.use("/api/skills", createSkillRouter(new SkillService(skillRepo)));
     app.use("/api", createChatRouter({ messages, agents, llm }));
     app.use(createShellRouter());
     // An API path nobody answered is a 404, never the app's page.

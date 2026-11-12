@@ -13,4 +13,4 @@ export const SERVER_FEATURES = false;
 // Parts of the desktop edition still being built; shown once their engine
 // side exists.
 export const SHOW_KNOWLEDGE_BASE = false;
-export const SHOW_SKILLS = false;
+export const SHOW_SKILLS = true;

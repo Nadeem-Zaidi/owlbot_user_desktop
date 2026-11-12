@@ -1,6 +1,6 @@
 import { BaseApi } from "@/shared/api/base_fetch";
 import type {
-  AgentCatalog, AgentDetail, AgentDraft, AgentFunction, AgentInput, AgentRun, AgentSummary, Agent, CodeFunction, CodeFunctionDraft,
+  AgentCatalog, AgentDetail, AgentDraft, AgentFile, AgentFunction, AgentInput, AgentRun, AgentSummary, Agent, CodeFunction, CodeFunctionDraft,
   FunctionDraft, HttpTestResult, McpServer, McpTool, RunPythonResult, Schedule, ScheduleDraft,
 } from "@/features/agents/types";
 
@@ -31,6 +31,12 @@ class AgentsApi extends BaseApi {
   testCodeFunction(agentId: string, fn: CodeFunctionDraft, args: Record<string, unknown>, functionId?: string) {
     return this.post<RunPythonResult>(`/agents/${agentId}/code-functions/test`, { function: fn, args, functionId });
   }
+
+  // Files given to the agent (desktop): sent as base64, text extracted by the app.
+  async listFiles(agentId: string) { return (await this.get<{ files: AgentFile[] }>(`/agents/${agentId}/files`)).files; }
+  uploadFile(agentId: string, name: string, dataBase64: string) { return this.post<AgentFile>(`/agents/${agentId}/files`, { name, data: dataBase64 }); }
+  readFile(agentId: string, id: string) { return this.get<AgentFile & { content: string }>(`/agents/${agentId}/files/${id}`); }
+  deleteFile(agentId: string, id: string) { return this.delete<void>(`/agents/${agentId}/files/${id}`); }
 
   async discoverMcp(url: string, token?: string) {
     return (await this.post<{ tools: McpTool[] }>("/agents/mcp/discover", { url, token })).tools;

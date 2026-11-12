@@ -488,4 +488,27 @@ CREATE TABLE IF NOT EXISTS "workspaces" (
   "updated_at" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   PRIMARY KEY (id)
 );
+
+-- Desktop only (not from the server schema): files given to one agent.
+-- Only the extracted text is kept; agent_file_chunks is its full-text index.
+CREATE TABLE IF NOT EXISTS "agent_files" (
+  "id" TEXT NOT NULL,
+  "agent_id" TEXT NOT NULL,
+  "name" TEXT NOT NULL,
+  "kind" TEXT NOT NULL,
+  "bytes" INTEGER NOT NULL,
+  "chars" INTEGER NOT NULL,
+  "content" TEXT NOT NULL,
+  "truncated" INTEGER NOT NULL DEFAULT 0,
+  "created_at" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  PRIMARY KEY (id),
+  UNIQUE (agent_id, name),
+  FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE CASCADE
+);
+CREATE VIRTUAL TABLE IF NOT EXISTS agent_file_chunks USING fts5(
+  content, file_id UNINDEXED, agent_id UNINDEXED, seq UNINDEXED, tokenize = 'porter unicode61'
+);
+CREATE TRIGGER IF NOT EXISTS agent_files_delete_chunks AFTER DELETE ON agent_files BEGIN
+  DELETE FROM agent_file_chunks WHERE file_id = old.id;
+END;
 `;

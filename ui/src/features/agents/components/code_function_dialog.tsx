@@ -91,7 +91,7 @@ export const CodeFunctionDialog = ({ agentId, initial, onSaved, onClose, api = a
     <Modal
       wide
       title={initial ? `Edit ${initial.name}` : "Write a Python function"}
-      subtitle="The agent calls run(args, secrets) when it needs this function. It runs in your Python service — it can use the network and any installed package."
+      subtitle="The agent calls run(args, secrets) when it needs this function. It runs with the Python on this computer — it can use any package you've installed, your files and the network."
       onClose={onClose}
       footer={
         <>

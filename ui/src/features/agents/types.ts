@@ -127,7 +127,18 @@ export type AgentRun = {
   finished_at: string | null;
 };
 
-export type AgentDetail = Agent & { functions: AgentFunction[]; codeFunctions: CodeFunction[]; mcpServers: McpServer[]; schedules: Schedule[] };
+export type AgentDetail = Agent & { functions: AgentFunction[]; codeFunctions: CodeFunction[]; mcpServers: McpServer[]; schedules: Schedule[]; files?: AgentFile[] };
+
+// A file given to an agent (desktop). Only its extracted text is kept.
+export type AgentFile = {
+  id: string;
+  name: string;
+  kind: "pdf" | "word" | "excel" | "csv" | "text";
+  bytes: number;
+  chars: number;
+  truncated: boolean;
+  created_at: string;
+};
 
 export type AgentInput = Pick<Agent, "name" | "icon" | "description" | "instructions" | "provider" | "model" | "builtin_tools" | "document_keys" | "starters" | "instruction_files" | "skill_mode" | "skill_ids" | "helper_agent_ids" | "limits">;
 

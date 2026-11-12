@@ -62,6 +62,15 @@ export class AgentRoutes extends BaseRouter<AgentService> {
             res.status(204).send();
         }));
 
+        // ── files given to the agent (desktop) ──
+        r.get("/:id/files", this.h(async (req, res) => res.json({ files: await this.service.listFiles(uid(req), p(req, "id")) })));
+        r.post("/:id/files", this.h(async (req, res) => res.status(201).json(await this.service.uploadFile(uid(req), p(req, "id"), req.body))));
+        r.get("/:id/files/:fid", this.h(async (req, res) => res.json(await this.service.readFile(uid(req), p(req, "id"), p(req, "fid")))));
+        r.delete("/:id/files/:fid", this.h(async (req, res) => {
+            await this.service.deleteFile(uid(req), p(req, "id"), p(req, "fid"));
+            res.status(204).send();
+        }));
+
         // ── code functions (Python; owner only) ──
         const email = (req: Request) => req.user?.email;
         r.post("/:id/code-functions", this.h(async (req, res) => res.status(201).json(await this.service.createCodeFunction(uid(req), email(req), p(req, "id"), req.body))));

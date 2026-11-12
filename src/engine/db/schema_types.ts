@@ -105,6 +105,10 @@ export const COLUMN_KINDS: Record<string, Record<string, ColumnKind>> = {
         "updated_at": "date",
         "pinned_at": "date"
     },
+    "agent_files": {
+        "truncated": "bool",
+        "created_at": "date"
+    },
     "skill_files": {
         "created_at": "date"
     },

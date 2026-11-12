@@ -25,7 +25,7 @@ export class SkillRepository {
     // Without content (the library list and each request's skill index).
     async list(userId: string, enabledOnly = false): Promise<Omit<SkillRow, "content">[]> {
         const { rows } = await this.db.query(
-            `SELECT id, user_id, name, description, enabled, license, source, created_at, updated_at, char_length(content) AS chars,
+            `SELECT id, user_id, name, description, enabled, license, source, created_at, updated_at, length(content) AS chars,
                     (SELECT count(*)::int FROM skill_files f WHERE f.skill_id = skills.id) AS file_count
              FROM skills WHERE user_id = $1 ${enabledOnly ? "AND enabled" : ""} ORDER BY name`,
             [userId]
@@ -86,7 +86,7 @@ export class SkillRepository {
 
     async deleteFile(userId: string, skillId: string, path: string): Promise<boolean> {
         const r = await this.db.query(
-            `DELETE FROM skill_files f USING skills s WHERE s.id = f.skill_id AND s.user_id = $1 AND s.id = $2 AND f.path = $3`,
+            `DELETE FROM skill_files WHERE skill_id = (SELECT id FROM skills WHERE user_id = $1 AND id = $2) AND path = $3`,
             [userId, skillId, path]);
         return r.rowCount > 0;
     }

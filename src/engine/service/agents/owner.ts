@@ -1,14 +1,15 @@
-// Code functions run arbitrary Python on the server, so only the app owner
-// may write, edit or test them: OWNER_EMAILS=you@example.com in .env.
-// While it's empty the feature is off entirely (existing code functions
-// aren't offered to the model either).
+// On the server, code functions run arbitrary Python on shared machines, so
+// only the owners listed in OWNER_EMAILS may write them. The desktop app has
+// a single user — whoever is signed in to this computer — and their code
+// runs on their own computer, so that person is always the owner.
 
 export function ownerEmails(): string[] {
     return (process.env.OWNER_EMAILS ?? "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
 }
 
-export const codeFunctionsEnabled = () => ownerEmails().length > 0;
+export const codeFunctionsEnabled = () => true;
 
+// Every request is made as the local user (see http/local_user.ts).
 export function isOwner(email?: string | null): boolean {
-    return !!email && ownerEmails().includes(email.toLowerCase());
+    return !!email;
 }
