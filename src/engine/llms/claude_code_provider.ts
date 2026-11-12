@@ -171,7 +171,9 @@ export class ClaudeCodeProvider implements ILLM {
             persistSession: keep,
             abortController: abort,
             cwd: this.deps.workDir,
-            env: cleanEnv(),
+            // App tools may wait on the user (a command's approval dialog,
+            // then the command itself): don't let Claude Code give up early.
+            env: { MCP_TOOL_TIMEOUT: String(75 * 60_000), ...cleanEnv() },
             ...(CLAUDE_EXE ? { pathToClaudeCodeExecutable: CLAUDE_EXE } : {}),
         };
 

@@ -3,6 +3,8 @@ import { ChatRunOptions, ILLM } from "../interfaces/illm";
 import { AgentService } from "../service/agents/agent_service";
 import { MessageService } from "../service/message_service";
 import { LLMMessage } from "../types/llm_message";
+import { LocalCommandBroker } from "../core/local_commands/local_command_tool";
+import { LocalCommandResult } from "../core/local_commands/run_command";
 
 type Handler = (req: Request, res: Response) => Promise<unknown>;
 
@@ -55,7 +57,7 @@ class Lanes {
 
 // Chats: the same paths and answers as the web app's /api chat routes, so the
 // same screens work. Every chat belongs to the one local user.
-export function createChatRouter(deps: { messages: MessageService; agents: AgentService; llm: ILLM }): Router {
+export function createChatRouter(deps: { messages: MessageService; agents: AgentService; llm: ILLM; localCommands?: LocalCommandBroker }): Router {
     const { messages, agents, llm } = deps;
     const r = Router();
     const uid = (req: Request) => req.user!.sub;
@@ -108,6 +110,19 @@ export function createChatRouter(deps: { messages: MessageService; agents: Agent
         res.status(204).send(sessionId);
     }));
 
+    // The page's answer to a command request: "unavailable" when it can't ask
+    // (not in the desktop app). In the app, the app itself answers first and
+    // this one is ignored.
+    r.post("/local-commands/:requestId", h(async (req, res) => {
+        const b = req.body ?? {};
+        const result: LocalCommandResult | null =
+            b.status === "denied" ? { status: "denied" }
+                : b.status === "unavailable" ? { status: "unavailable", message: String(b.message ?? "Couldn't run the command.").slice(0, 500) }
+                    : null;
+        if (!result) return res.json({ ok: true, accepted: false });
+        res.json({ ok: true, accepted: deps.localCommands?.resolve(String(req.params.requestId), result, uid(req)) ?? false });
+    }));
+
     // One turn, streamed as server-sent events (the web app's event names).
     r.post("/chat_stream", h(async (req, res) => {
         const userId = uid(req);
@@ -122,7 +137,10 @@ export function createChatRouter(deps: { messages: MessageService; agents: Agent
         let run: ChatRunOptions | undefined;
         if (agent) {
             ({ model } = await agents.resolveLLM(agent, userId));
-            run = await agents.buildRun(agent);
+            // "X-Owl-Desktop: shell; platform=win32" = the desktop app's own
+            // window, which can show the approval dialog for commands.
+            const desktop = /^shell;\s*platform=([a-z0-9]+)$/i.exec(String(req.headers["x-owl-desktop"] ?? ""));
+            run = await agents.buildRun(agent, desktop ? { localCommands: { platform: desktop[1] } } : {});
         } else {
             model = models.includes(req.body?.model) ? req.body.model : llm.getModel();
         }

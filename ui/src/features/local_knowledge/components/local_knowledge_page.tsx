@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import { AlertTriangle, ChevronDown, ExternalLink, FileText, FolderOpen, FolderPlus, HardDrive, Laptop, RefreshCw, Search, Trash2 } from "lucide-react";
 import { Button, ConfirmDialog, ErrorNote } from "@/shared/ui/ui";
 import { ago } from "@/features/automations/api/automations_api";
-import { desktop, desktopError, type IndexProgress, type KnowledgeStats, type LocalFile, type LocalFolder, type LocalHit } from "@/shared/lib/desktop";
+import { knowledgeDesktop as desktop, desktopError, type IndexProgress, type KnowledgeStats, type LocalFile, type LocalFolder, type LocalHit } from "@/shared/lib/desktop";
 
 const bytes = (n: number) => n < 1024 ? `${n} B` : n < 1024 ** 2 ? `${(n / 1024).toFixed(0)} KB` : `${(n / 1024 ** 2).toFixed(1)} MB`;
 

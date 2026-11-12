@@ -15,6 +15,7 @@ import { SkillRepository } from "./repository/skill_repository";
 import { createSkillRouter } from "./routes/skill_routes";
 import { SkillService } from "./service/skills/skill_service";
 import { useSecretsKeyDir } from "./service/agents/secrets";
+import { createLocalCommandTool, LocalCommandBroker } from "./core/local_commands/local_command_tool";
 import { MessageRepository } from "./repository/message_repository";
 import { PipelineRepository } from "./repository/pipeline_repository";
 import { SessionRepository } from "./repository/sessiopn_repository";
@@ -40,9 +41,18 @@ export type EngineOptions = {
     // 0 = any free port.
     port?: number;
     userName?: string;
+    // The desktop app can ask the user to approve commands (an Electron
+    // dialog), so agents may be given run_local_command. Off otherwise.
+    localCommands?: boolean;
 };
 
-export type Engine = { port: number; url: string; close(): Promise<void> };
+export type Engine = {
+    port: number;
+    url: string;
+    // Pending command requests, for the desktop app's approval dialog.
+    localCommands: LocalCommandBroker;
+    close(): Promise<void>;
+};
 
 // Everything the desktop app runs: one SQLite file, Claude Code for every
 // answer, and the agents / workflows / chat API the web UI talks to — all in
@@ -71,7 +81,9 @@ export async function startEngine(opts: EngineOptions): Promise<Engine> {
 
     const agentRepo = new AgentRepository(db);
     const skillRepo = new SkillRepository(db);
+    const localCommands = new LocalCommandBroker();
     const agents = new AgentService({
+        ...(opts.localCommands ? { localCommandTool: createLocalCommandTool(localCommands) } : {}),
         files: new AgentFileRepository(db),
         skills: skillRepo,
         repo: agentRepo,
@@ -104,7 +116,7 @@ export async function startEngine(opts: EngineOptions): Promise<Engine> {
     app.use("/api/pipelines", new PipelineRoutes(pipelines).getRouter());
     app.use("/api/studio", createStudioRouter(studio));
     app.use("/api/skills", createSkillRouter(new SkillService(skillRepo)));
-    app.use("/api", createChatRouter({ messages, agents, llm }));
+    app.use("/api", createChatRouter({ messages, agents, llm, localCommands }));
     app.use(createShellRouter());
     // An API path nobody answered is a 404, never the app's page.
     app.use(DATA_PATHS, (_req, res) => res.status(404).json({ message: "Not available in the desktop app" }));
@@ -128,6 +140,7 @@ export async function startEngine(opts: EngineOptions): Promise<Engine> {
     return {
         port,
         url: `http://127.0.0.1:${port}`,
+        localCommands,
         close: async () => {
             scheduler.stop();
             studio.stop();

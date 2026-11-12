@@ -1,5 +1,5 @@
 import type { TextContent } from "@/shared/types";
-import { desktop, type LocalHit } from "@/shared/lib/desktop";
+import { knowledgeDesktop as desktop, type LocalHit } from "@/shared/lib/desktop";
 
 // "Use my local files" in chat: search the desktop app's local index for the
 // message and send the best passages along as hidden context. Only these

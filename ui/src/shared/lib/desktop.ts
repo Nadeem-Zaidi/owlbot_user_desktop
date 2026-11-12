@@ -63,11 +63,12 @@ export type LocalCommandResult =
   | { status: "unavailable"; message: string };
 
 export type DesktopBridge = {
-  version: string;
+  version?: string;
   platform: string;
   // Window title bar + background follow the app theme (shared/lib/theme.ts).
   setTheme?(t: { id: string; dark: boolean; background: string }): void;
-  knowledge: {
+  // Local-files search (not in this desktop edition yet).
+  knowledge?: {
     listFolders(): Promise<LocalFolder[]>;
     addFolder(): Promise<LocalFolder | null>;
     removeFolder(id: number): Promise<boolean>;
@@ -90,7 +91,13 @@ export type DesktopBridge = {
 export const desktop: DesktopBridge | null =
   typeof window !== "undefined" ? ((window as unknown as { owlDesktop?: DesktopBridge }).owlDesktop ?? null) : null;
 
-export const isDesktop = desktop !== null;
+// The bridge when it includes local-files search (the local knowledge screens use this).
+export const knowledgeDesktop = desktop?.knowledge
+  ? (desktop as DesktopBridge & { knowledge: NonNullable<DesktopBridge["knowledge"]> })
+  : null;
+
+// Local-files search is available (the commands bridge alone doesn't count).
+export const isDesktop = !!desktop?.knowledge;
 
 // Electron wraps errors as "Error invoking remote method 'x': Error: <msg>".
 export function desktopError(e: unknown, fallback: string): string {
